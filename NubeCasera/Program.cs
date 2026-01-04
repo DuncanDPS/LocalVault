@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
+using NubeCasera.Datos;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// inyeccion de dependencias de EFCORE
+builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefConnection")));
+
 
 var app = builder.Build();
 
