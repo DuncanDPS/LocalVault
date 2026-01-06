@@ -7,5 +7,6 @@ namespace NubeCasera.Controllers
     [ApiController]
     public class ArchivoReferenciaController : ControllerBase
     {
+        
     }
 }
