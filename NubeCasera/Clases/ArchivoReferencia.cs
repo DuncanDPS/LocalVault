@@ -17,6 +17,6 @@
         public bool EstaEliminado { get; set; } = false;
 
         public Categoria carpetaLogica { get; set; }
-
+        
     }
 }
