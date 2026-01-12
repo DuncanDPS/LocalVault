@@ -11,8 +11,8 @@ using NubeCasera.Datos;
 namespace NubeCasera.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20260110024205_makecarpetalogicaopcional")]
-    partial class makecarpetalogicaopcional
+    [Migration("20260112012847_InitialCreateWithSeed")]
+    partial class InitialCreateWithSeed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,21 +82,24 @@ namespace NubeCasera.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Ruta")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("ID");
 
                     b.HasIndex("CategoriaPadreID");
 
                     b.ToTable("categorias");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = new Guid("00000000-0000-0000-0000-000000000001"),
+                            NombreCategoria = "Principal"
+                        });
                 });
 
             modelBuilder.Entity("NubeCasera.Clases.ArchivoReferencia", b =>
                 {
                     b.HasOne("NubeCasera.Clases.Categoria", "carpetaLogica")
-                        .WithMany()
+                        .WithMany("archivosReferencias")
                         .HasForeignKey("carpetaLogicaID");
 
                     b.Navigation("carpetaLogica");
@@ -114,6 +117,8 @@ namespace NubeCasera.Migrations
             modelBuilder.Entity("NubeCasera.Clases.Categoria", b =>
                 {
                     b.Navigation("SubCategorias");
+
+                    b.Navigation("archivosReferencias");
                 });
 #pragma warning restore 612, 618
         }

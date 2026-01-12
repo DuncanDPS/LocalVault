@@ -53,7 +53,8 @@ namespace NubeCasera.Servicios
                     Extension = archivoReferenciaDTO.Extension,
                     MimeType = archivoReferenciaDTO.MimeType,
                     TamanioBytes = archivoReferenciaDTO.TamanioBytes,
-                    EstaEliminado = false
+                    EstaEliminado = false,
+                    carpetaLogicaID = archivoReferenciaDTO.CarpetaLogicaId
                 };
                 _appDBContext.archivoReferencias.Add(nuevoArchivo);
                 await _appDBContext.SaveChangesAsync();

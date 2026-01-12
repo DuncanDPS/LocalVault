@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace NubeCasera.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreateWithSeed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,6 @@ namespace NubeCasera.Migrations
                 {
                     ID = table.Column<Guid>(type: "TEXT", nullable: false),
                     NombreCategoria = table.Column<string>(type: "TEXT", nullable: false),
-                    Ruta = table.Column<string>(type: "TEXT", nullable: false),
                     CategoriaPadreID = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -44,7 +43,7 @@ namespace NubeCasera.Migrations
                     MimeType = table.Column<string>(type: "TEXT", nullable: false),
                     TamanioBytes = table.Column<long>(type: "INTEGER", nullable: false),
                     EstaEliminado = table.Column<bool>(type: "INTEGER", nullable: false),
-                    carpetaLogicaID = table.Column<Guid>(type: "TEXT", nullable: false)
+                    carpetaLogicaID = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -53,9 +52,13 @@ namespace NubeCasera.Migrations
                         name: "FK_archivoReferencias_categorias_carpetaLogicaID",
                         column: x => x.carpetaLogicaID,
                         principalTable: "categorias",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
+
+            migrationBuilder.InsertData(
+                table: "categorias",
+                columns: new[] { "ID", "CategoriaPadreID", "NombreCategoria" },
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), null, "Principal" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_archivoReferencias_carpetaLogicaID",

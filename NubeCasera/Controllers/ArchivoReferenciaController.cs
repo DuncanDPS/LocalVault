@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NubeCasera.Datos;
 using NubeCasera.Dtos;
 using NubeCasera.Servicios;
 using System.Runtime.Intrinsics.Arm;
@@ -48,7 +49,8 @@ namespace NubeCasera.Controllers
                     Extension = Path.GetExtension(archivo.FileName),
                     MimeType = archivo.ContentType,
                     TamanioBytes = archivo.Length,
-                    FechaDeSubida = DateTime.UtcNow
+                    FechaDeSubida = DateTime.UtcNow,
+                    CarpetaLogicaId = AppDBContext.CategoriaPrincipalId
                 };
 
                 var carpeta = Path.Combine("ArchivosSubidos", DateTime.UtcNow.ToString("yyyy"), DateTime.UtcNow.ToString("MM"));

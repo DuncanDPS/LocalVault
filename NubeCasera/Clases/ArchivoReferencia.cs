@@ -17,7 +17,7 @@
         public bool EstaEliminado { get; set; } = false;
 
         public Categoria? carpetaLogica { get; set; } = null;
-        public Guid? carpetaLogicaID { get; set; }  // Agregar nullable
+        public Guid? carpetaLogicaID { get; set; }
 
     }
 }
