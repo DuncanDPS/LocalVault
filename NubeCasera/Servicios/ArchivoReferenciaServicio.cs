@@ -60,6 +60,14 @@ namespace NubeCasera.Servicios
                 await _appDBContext.SaveChangesAsync();
 
 
+                // obtener el nombre de la categoria
+                var nombreCategoria = await _appDBContext.categorias.FindAsync(AppDBContext.CategoriaPrincipalId);
+
+                if(nombreCategoria == null)
+                {
+                    throw new InvalidOperationException("La Categoria asignada no existe");
+                }
+
                 // MAPEO A DTO PARA RETORNAR
                 var resultado = new ArchivoReferenciaDTO
                 {
@@ -72,7 +80,8 @@ namespace NubeCasera.Servicios
                     Extension = nuevoArchivo.Extension,
                     MimeType = nuevoArchivo.MimeType,
                     TamanioBytes = nuevoArchivo.TamanioBytes,
-                    EstaEliminado = nuevoArchivo.EstaEliminado
+                    EstaEliminado = nuevoArchivo.EstaEliminado,
+                    CarpetaLogicaNombre = nombreCategoria.NombreCategoria
                 };
 
                 return resultado;
