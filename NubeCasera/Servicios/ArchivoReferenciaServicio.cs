@@ -20,7 +20,8 @@ namespace NubeCasera.Servicios
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosReferencia()
+        // TODO : IMPLEMENTAR ESTA INTERFAZ SI GUID ES NULO O DIFERENTE A OTRO ID EXISTENTE, ENTONCES MOSTRAMOS LA CATEGORIA POR DEFECTO LLAMADA 'PRINCIPAL'
+        public Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosReferencia(Guid? id)
         {
             throw new NotImplementedException();
         }

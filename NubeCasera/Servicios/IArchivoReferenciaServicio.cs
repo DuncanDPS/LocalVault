@@ -1,4 +1,5 @@
 ﻿using NubeCasera.Clases;
+using NubeCasera.Datos;
 using NubeCasera.Dtos;
 
 namespace NubeCasera.Servicios
@@ -8,11 +9,12 @@ namespace NubeCasera.Servicios
     /// </summary>
     public interface IArchivoReferenciaServicio
     {
+       
         /// <summary>
         /// Invoca a todos los archivos de referencia
         /// </summary>
         /// <returns></returns>
-        public Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosReferencia();
+        public Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosReferencia(Guid? id);
         /// <summary>
         /// Obtenemos un archivo a traves de su ID
         /// </summary>
