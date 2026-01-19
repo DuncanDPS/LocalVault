@@ -11,8 +11,10 @@ namespace NubeCasera.Servicios
     {
        
         /// <summary>
-        /// Invoca a todos los archivos de referencia
+        /// Devuelve los archivos por referencia de una categoria en especifico, si no se menciona un id, entonces
+        /// se muestran los archivos de la categoria principal
         /// </summary>
+        /// <param name="id">id de la categoria especifica opcional</param>
         /// <returns></returns>
         public Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosReferencia(Guid? id);
         /// <summary>

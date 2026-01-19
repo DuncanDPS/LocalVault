@@ -21,9 +21,37 @@ namespace NubeCasera.Servicios
         }
 
         // TODO : IMPLEMENTAR ESTA INTERFAZ SI GUID ES NULO O DIFERENTE A OTRO ID EXISTENTE, ENTONCES MOSTRAMOS LA CATEGORIA POR DEFECTO LLAMADA 'PRINCIPAL'
-        public Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosReferencia(Guid? id)
+        public async Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosReferencia(Guid? id)
         {
-            throw new NotImplementedException();
+            Guid categoriaId = id ?? AppDBContext.CategoriaPrincipalId;
+
+            // verificar si la categoria existe
+            var categoriaExiste = await _appDBContext.categorias.AnyAsync(c => c.ID == categoriaId);
+
+            if (!categoriaExiste)
+            {
+                categoriaId = AppDBContext.CategoriaPrincipalId;
+            }
+
+            // obtener los archivos de la categoria especifica
+            var archivos = await _appDBContext.archivoReferencias.Include(a => a.carpetaLogica)
+            .Where(a => a.carpetaLogicaID == categoriaId && !a.EstaEliminado)
+            .Select(a => new ArchivoReferenciaDTO
+            {
+                Id = a.ID,
+                Nombre = a.Nombre,
+                FechaDeSubida = a.FechaDeSubida,
+                Hash = a.Hash,
+                TipoHash = a.TipoHash,
+                RutaDeAlmacenamiento = a.RutaDeAlmacenamiento,
+                Extension = a.Extension,
+                MimeType = a.MimeType,
+                TamanioBytes = a.TamanioBytes,
+                EstaEliminado = a.EstaEliminado,
+                CarpetaLogicaNombre = a.carpetaLogica != null ? a.carpetaLogica.NombreCategoria : string.Empty
+            }).ToListAsync();
+
+            return archivos;
         }
 
         public async Task<ArchivoReferenciaDTO> SubirArchivoReferencia(ArchivoReferenciaDTO_Add archivoReferenciaDTO)

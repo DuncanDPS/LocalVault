@@ -68,9 +68,21 @@ namespace NubeCasera.Controllers
             catch(Exception ex)
             {
                 return StatusCode(500, new {mensaje = "Error al subir archivo", detalle = ex.Message});
-            }
+            }   
+        }
 
-                
+        [HttpGet("obtener-archivos/{id?}")]
+        public async Task<IActionResult> ObtenerArchivosReferencia(Guid? id)
+        {
+            try
+            {
+                var archivos = await _archivoReferenciaServ.ObtenerArchivosReferencia(id);
+                return Ok(archivos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al obtener archivos", detalle = ex.Message });
+            }
         }
     }
 }
