@@ -20,7 +20,7 @@ namespace NubeCasera.Controllers
         }
 
         [HttpPost("subir-archivo")]
-        public async Task<IActionResult> SubirArchivo(IFormFile archivo)
+        public async Task<IActionResult> GuardarAsync(IFormFile archivo)
         {
             // validar que no sea null
             if(archivo == null)
@@ -72,7 +72,7 @@ namespace NubeCasera.Controllers
         }
 
         [HttpGet("obtener-archivos/{id?}")]
-        public async Task<IActionResult> ObtenerArchivosReferencia(Guid? id)
+        public async Task<IActionResult> ObtenerArchivosAsync(Guid? id)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace NubeCasera.Controllers
         }
 
         [HttpGet("obtener-archivo/{id}")]
-        public async Task<IActionResult> ObtenerArchivoReferencia(Guid id)
+        public async Task<IActionResult> ObtenerArchivoAsync(Guid id)
         {
             try
             {
