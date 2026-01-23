@@ -15,12 +15,43 @@ namespace NubeCasera.Servicios
             _appDBContext = appDBContext;
         }
 
-        public Task<ArchivoReferenciaDTO> ObtenerArchivoReferencia(Guid id)
+        public async Task<ArchivoReferenciaDTO> ObtenerArchivoReferencia(Guid id)
         {
-            throw new NotImplementedException();
+            // validamos que el id no sea nulo
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+            // buscamos el archivo en la base de datos
+           ArchivoReferencia? archivoExistente = await _appDBContext.archivoReferencias.Include(a => a.carpetaLogica).FirstOrDefaultAsync(a => a.ID == id);
+
+            if (archivoExistente == null)
+            {
+              throw new KeyNotFoundException($"El archivo con ID: {id}, no se encontro ");
+            }
+            // si existe entonces lo convertimos en DTO y lo retornamos
+            // si existe entonces lo convertimos en DTO y lo retornamos
+            var archivoDTO = new ArchivoReferenciaDTO
+            {
+                Id = archivoExistente.ID,
+                Nombre = archivoExistente.Nombre,
+                FechaDeSubida = archivoExistente.FechaDeSubida,
+                Hash = archivoExistente.Hash,
+                TipoHash = archivoExistente.TipoHash,
+                RutaDeAlmacenamiento = archivoExistente.RutaDeAlmacenamiento,
+                Extension = archivoExistente.Extension,
+                MimeType = archivoExistente.MimeType,
+                TamanioBytes = archivoExistente.TamanioBytes,
+                EstaEliminado = archivoExistente.EstaEliminado,
+                CarpetaLogicaId = archivoExistente.carpetaLogicaID,
+                CarpetaLogicaNombre = archivoExistente.carpetaLogica != null ? archivoExistente.carpetaLogica.NombreCategoria : string.Empty
+            };
+
+            return archivoDTO;
+
         }
 
-        // TODO : IMPLEMENTAR ESTA INTERFAZ SI GUID ES NULO O DIFERENTE A OTRO ID EXISTENTE, ENTONCES MOSTRAMOS LA CATEGORIA POR DEFECTO LLAMADA 'PRINCIPAL'
+
         public async Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosReferencia(Guid? id)
         {
             Guid categoriaId = id ?? AppDBContext.CategoriaPrincipalId;
@@ -119,7 +150,8 @@ namespace NubeCasera.Servicios
             {
                 throw;
             }
- 
+
+            
         }
     }
 }

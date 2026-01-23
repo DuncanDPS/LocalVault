@@ -16,6 +16,6 @@ public class ArchivoReferenciaDTO
         public bool EstaEliminado { get; set; }
 
         // Datos de la carpeta lógica que se mostrarán
-        public Guid CarpetaLogicaId { get; set; }
+        public Guid? CarpetaLogicaId { get; set; }
         public string? CarpetaLogicaNombre { get; set; }
 }
