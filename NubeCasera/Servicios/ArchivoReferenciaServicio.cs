@@ -15,7 +15,7 @@ namespace NubeCasera.Servicios
             _appDBContext = appDBContext;
         }
 
-        public async Task<ArchivoReferenciaDTO> ObtenerArchivoReferencia(Guid id)
+        public async Task<ArchivoReferenciaDTO> ObtenerArchivoAsync(Guid id)
         {
             // validamos que el id no sea nulo
             if(id == Guid.Empty)
@@ -52,7 +52,7 @@ namespace NubeCasera.Servicios
         }
 
 
-        public async Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosReferencia(Guid? id)
+        public async Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosAsync(Guid? id)
         {
             Guid categoriaId = id ?? AppDBContext.CategoriaPrincipalId;
 
@@ -85,7 +85,7 @@ namespace NubeCasera.Servicios
             return archivos;
         }
 
-        public async Task<ArchivoReferenciaDTO> SubirArchivoReferencia(ArchivoReferenciaDTO_Add archivoReferenciaDTO)
+        public async Task<ArchivoReferenciaDTO> SubirArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO)
         {
             try
             {

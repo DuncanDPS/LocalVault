@@ -16,20 +16,22 @@ namespace NubeCasera.Servicios
         /// </summary>
         /// <param name="id">id de la categoria especifica opcional</param>
         /// <returns></returns>
-        public Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosReferencia(Guid? id);
+        public Task<IEnumerable<ArchivoReferenciaDTO>> ObtenerArchivosAsync(Guid? id);
         /// <summary>
         /// Obtenemos un archivo a traves de su ID
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Devuelve un archivo segun su ID especifico</returns>
-        public Task<ArchivoReferenciaDTO> ObtenerArchivoReferencia(Guid id);
+        public Task<ArchivoReferenciaDTO> ObtenerArchivoAsync(Guid id);
         
         /// <summary>
         /// Sube un archivo de referencia
         /// </summary>
         /// <param name="archivoReferenciaDTO"></param>
         /// <returns></returns>
-        public Task<ArchivoReferenciaDTO> SubirArchivoReferencia(ArchivoReferenciaDTO_Add archivoReferenciaDTO);
+        public Task<ArchivoReferenciaDTO> SubirArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO);
         
+        
+
     }
 }

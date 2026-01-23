@@ -58,7 +58,7 @@ namespace NubeCasera.Controllers
                 archivoDTO.RutaDeAlmacenamiento = Path.Combine(carpeta, $"{hash}{Path.GetExtension(archivo.FileName)}");
 
                 // llamar al servicio
-                var resultado = await _archivoReferenciaServ.SubirArchivoReferencia(archivoDTO);
+                var resultado = await _archivoReferenciaServ.SubirArchivoAsync(archivoDTO);
                 return Ok(resultado);
             }
             catch (InvalidOperationException ex)
@@ -76,7 +76,7 @@ namespace NubeCasera.Controllers
         {
             try
             {
-                var archivos = await _archivoReferenciaServ.ObtenerArchivosReferencia(id);
+                var archivos = await _archivoReferenciaServ.ObtenerArchivosAsync(id);
                 return Ok(archivos);
             }
             catch (Exception ex)
@@ -90,7 +90,7 @@ namespace NubeCasera.Controllers
         {
             try
             {
-                var archivo = await _archivoReferenciaServ.ObtenerArchivoReferencia(id);
+                var archivo = await _archivoReferenciaServ.ObtenerArchivoAsync(id);
                 return Ok(archivo);
             }
             catch(Exception ex)
