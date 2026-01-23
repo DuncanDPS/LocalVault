@@ -84,5 +84,19 @@ namespace NubeCasera.Controllers
                 return StatusCode(500, new { mensaje = "Error al obtener archivos", detalle = ex.Message });
             }
         }
+
+        [HttpGet("obtener-archivo/{id}")]
+        public async Task<IActionResult> ObtenerArchivoReferencia(Guid id)
+        {
+            try
+            {
+                var archivo = await _archivoReferenciaServ.ObtenerArchivoReferencia(id);
+                return Ok(archivo);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new {mensaje = "Error al obtener el archivo ", detalle = ex.Message});
+            }
+        }
     }
 }
