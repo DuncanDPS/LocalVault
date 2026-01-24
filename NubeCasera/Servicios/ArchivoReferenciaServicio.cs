@@ -85,6 +85,7 @@ namespace NubeCasera.Servicios
             return archivos;
         }
 
+        // TODO: Implementar almacenamiento físico de archivos con consistencia transaccional respecto a la metadata, añadir endpoints de descarga/eliminación, validar tamaños/MIME y cubrir funcionalidad con pruebas.
         public async Task<ArchivoReferenciaDTO> GuardarArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO)
         {
             try
@@ -120,7 +121,7 @@ namespace NubeCasera.Servicios
                 await _appDBContext.SaveChangesAsync();
 
                 // guardamos el archivo fisico en el disco
-                
+
 
 
                 // obtener el nombre de la categoria
