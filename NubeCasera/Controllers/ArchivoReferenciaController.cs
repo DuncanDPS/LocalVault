@@ -52,13 +52,13 @@ namespace NubeCasera.Controllers
                     FechaDeSubida = DateTime.UtcNow,
                     CarpetaLogicaId = AppDBContext.CategoriaPrincipalId
                 };
-
+            /*
                 var carpeta = Path.Combine("ArchivosSubidos", DateTime.UtcNow.ToString("yyyy"), DateTime.UtcNow.ToString("MM"));
                 Directory.CreateDirectory(carpeta); // Crear si no existe
                 archivoDTO.RutaDeAlmacenamiento = Path.Combine(carpeta, $"{hash}{Path.GetExtension(archivo.FileName)}");
-
+            */
                 // llamar al servicio
-                var resultado = await _archivoReferenciaServ.GuardarArchivoAsync(archivoDTO);
+                var resultado = await _archivoReferenciaServ.GuardarArchivoAsync(archivoDTO, archivo);
                 return Ok(resultado);
             }
             catch (InvalidOperationException ex)

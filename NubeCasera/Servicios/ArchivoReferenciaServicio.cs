@@ -85,17 +85,16 @@ namespace NubeCasera.Servicios
             return archivos;
         }
 
-        // TODO: Implementar almacenamiento físico de archivos con consistencia transaccional respecto a la metadata, añadir endpoints de descarga/eliminación, validar tamaños/MIME y cubrir funcionalidad con pruebas.
-        public async Task<ArchivoReferenciaDTO> GuardarArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO)
+        // TODO: Implementar almacenamiento físico de archivos con consistencia transaccional respecto a la metadata
+        public async Task<ArchivoReferenciaDTO> GuardarArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO, IFormFile archivoFisico)
         {
             try
             {
-                // 3. Validar que el archivo no exista mediante su hash y que no sea null
-                if(archivoReferenciaDTO == null)
+                if(archivoReferenciaDTO == null || archivoFisico == null || archivoFisico.Length == 0)
                 {
-                    throw new ArgumentNullException(nameof(archivoReferenciaDTO));
+                    throw new ArgumentNullException(nameof(archivoReferenciaDTO), nameof(archivoFisico));
                 }
-                    // validar el hash, buscando en la BD alguno similar
+                    // validar el hash, buscando en la BD algun hash similar
                     var hashExistente = await _appDBContext.archivoReferencias.FirstOrDefaultAsync(a => a.Hash == archivoReferenciaDTO.Hash && !a.EstaEliminado);
                 if(hashExistente != null)
                 {
@@ -110,18 +109,27 @@ namespace NubeCasera.Servicios
                     FechaDeSubida = (DateTime)archivoReferenciaDTO.FechaDeSubida,
                     Hash = archivoReferenciaDTO.Hash,
                     TipoHash = archivoReferenciaDTO.TipoHash,
-                    RutaDeAlmacenamiento = archivoReferenciaDTO.RutaDeAlmacenamiento,
                     Extension = archivoReferenciaDTO.Extension,
                     MimeType = archivoReferenciaDTO.MimeType,
                     TamanioBytes = archivoReferenciaDTO.TamanioBytes,
                     EstaEliminado = false,
                     carpetaLogicaID = archivoReferenciaDTO.CarpetaLogicaId
                 };
+
+                // establezco la ruta de almacenamiento
+                nuevoArchivo.RutaDeAlmacenamiento = RutaDeAlmacenamiento(nuevoArchivo.Extension);
+
+
+
                 _appDBContext.archivoReferencias.Add(nuevoArchivo);
                 await _appDBContext.SaveChangesAsync();
 
                 // guardamos el archivo fisico en el disco
-
+                using(var stream = archivoFisico.OpenReadStream())
+                {
+                    // se hace una llamada al metodo que guarda el stream
+                    await GuardarEnDisco(stream,nuevoArchivo.RutaDeAlmacenamiento,nuevoArchivo.Nombre);
+                }
 
 
                 // obtener el nombre de la categoria
@@ -153,9 +161,46 @@ namespace NubeCasera.Servicios
             catch
             {
                 throw;
-            }
-
-            
+            }   
         }
+
+        // metodo que guarda el archivo en el disco
+        private async Task GuardarEnDisco(Stream archivo, string rutaRelativa, string nombreArchivo)
+        {
+            var Rutacompleta = Path.Combine(rutaRelativa,nombreArchivo);
+
+            using var archivoDestino = new FileStream(Rutacompleta,FileMode.Create);
+            await archivo.CopyToAsync(archivoDestino);
+        }
+
+        // metodo que ayuda a dirigir los archivos a sus rutas
+        private string RutaDeAlmacenamiento(string extension)
+        {
+            // validar que extension no sea null
+            if(extension == null)
+            {
+                throw new ArgumentNullException("La extension pasada como parametro esta vacia o nula");
+            }
+            
+            string miCarpeta = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "MisProyectos","ArchivosReference");
+
+            // si no existe entonces se crea el directorio
+            if (!Directory.Exists(miCarpeta)) Directory.CreateDirectory(miCarpeta);
+            
+            // ahora dependiendo de la extension se crea una ruta, si no existe y se devuelve
+            // si existe solamente se devuelve la ruta. 
+            string rutaExtension = Path.Combine(miCarpeta,extension);
+            if (!Directory.Exists(rutaExtension))
+            {
+                Directory.CreateDirectory(rutaExtension);
+                return rutaExtension;
+            }
+            else
+            {
+                return rutaExtension;
+            }
+        }
+
+
     }
 }
