@@ -85,7 +85,7 @@ namespace NubeCasera.Servicios
             return archivos;
         }
 
-        public async Task<ArchivoReferenciaDTO> SubirArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO)
+        public async Task<ArchivoReferenciaDTO> GuardarArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO)
         {
             try
             {
@@ -118,6 +118,9 @@ namespace NubeCasera.Servicios
                 };
                 _appDBContext.archivoReferencias.Add(nuevoArchivo);
                 await _appDBContext.SaveChangesAsync();
+
+                // guardamos el archivo fisico en el disco
+                
 
 
                 // obtener el nombre de la categoria

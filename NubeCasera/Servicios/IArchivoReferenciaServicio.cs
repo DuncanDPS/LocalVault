@@ -29,7 +29,7 @@ namespace NubeCasera.Servicios
         /// </summary>
         /// <param name="archivoReferenciaDTO"></param>
         /// <returns></returns>
-        public Task<ArchivoReferenciaDTO> SubirArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO);
+        public Task<ArchivoReferenciaDTO> GuardarArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO);
         
         // TODO:      - Task<Stream> DescargarAsync(Guid id)
         
