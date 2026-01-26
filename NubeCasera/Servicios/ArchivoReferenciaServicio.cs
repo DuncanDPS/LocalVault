@@ -2,6 +2,9 @@
 using NubeCasera.Dtos;
 using NubeCasera.Datos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 
 namespace NubeCasera.Servicios
 {
@@ -199,6 +202,65 @@ namespace NubeCasera.Servicios
             {
                 return rutaExtension;
             }
+        }
+
+        
+        public async Task<Stream> DescargarAsync(Guid id)
+        {
+            // 1. validar el id que no sea nulo  y que exista un un archivo con ese id
+            if(id == Guid.Empty) throw new ArgumentNullException("El id esta vacio");
+            
+            var archivoReferencia = await _appDBContext.archivoReferencias.FindAsync(id);
+
+            if(archivoReferencia == null) throw new KeyNotFoundException($"No se encontro el archivo con ID: {id} o este no existe.");
+
+            // 2. Obtener el path de donde se almacena ese archivo
+            var rutaCompleta = Path.Combine(archivoReferencia.RutaDeAlmacenamiento,archivoReferencia.Nombre);
+
+            if(!File.Exists(rutaCompleta)) throw new FileNotFoundException($"El archivo con ID: {id}  no se encontro.");
+
+            // 3. Verificar integridad del archivo
+            bool hashValido = await VerificarHashAsync(rutaCompleta,archivoReferencia.Hash,archivoReferencia.TipoHash);
+
+            if(!hashValido) throw new InvalidOperationException("El archivo esta corrupto o ha sido modificado");
+
+            // devolver un stream
+            return File.OpenRead(rutaCompleta);
+        }
+
+
+        private async Task<bool> VerificarHashAsync(string rutaArchivo, string hashEsperado, string tipoHash)
+        {
+            if(!File.Exists(rutaArchivo)) return false;
+
+            using var stream = File.OpenRead(rutaArchivo);
+            string hashCalculado = await CalcularHashAsync(stream,tipoHash);
+
+            return string.Equals(hashCalculado, hashEsperado, StringComparison.OrdinalIgnoreCase);
+        }
+
+        // metodo privado para uso interno
+        private async Task<string> CalcularHashAsync(Stream stream, string tipoHash = "SHA256")
+        {
+            using HashAlgorithm hashAlgorithm = tipoHash.ToUpper() switch
+            {
+                "SHA256" => SHA256.Create(),
+                "SHA512" => SHA512.Create(),
+                "MD5" => MD5.Create(),
+                _ => SHA256.Create()
+            };
+
+            stream.Position = 0;
+            byte[] hashBytes = await hashAlgorithm.ComputeHashAsync(stream);
+            stream.Position = 0;
+            
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+        }
+
+        // metodo publico para calcular hash en el controlador
+        public async Task<string> CalcularHashArchivoAsync(Stream stream, string tipoHash)
+        {
+            return await CalcularHashAsync(stream, tipoHash);
         }
 
 

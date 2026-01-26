@@ -30,9 +30,19 @@ namespace NubeCasera.Servicios
         /// <param name="archivoReferenciaDTO"></param>
         /// <returns></returns>
         public Task<ArchivoReferenciaDTO> GuardarArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO, IFormFile archivoFisico);
+
+        /// <summary>
+        /// Este metodo sirve para calcular el hash de los archivos
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="tipoHash"></param>
+        /// <returns></returns>
+        public Task<string> CalcularHashArchivoAsync(Stream stream, string tipoHash);
+
         
         // TODO:      - Task<Stream> DescargarAsync(Guid id)
-        
+        public Task<Stream> DescargarAsync(Guid id);
+
         // TODO:      - Task EliminarAsync(Guid id)
 
     }

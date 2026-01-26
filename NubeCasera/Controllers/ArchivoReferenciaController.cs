@@ -33,11 +33,7 @@ namespace NubeCasera.Controllers
                 string hash;
                 using (var stream = archivo.OpenReadStream())
                 {
-                    using (var sha256 = SHA256.Create())
-                    {
-                        var hashBytes = await sha256.ComputeHashAsync(stream);
-                        hash = BitConverter.ToString(hashBytes).Replace("-", "");
-                    }
+                    hash = await _archivoReferenciaServ.CalcularHashArchivoAsync(stream,"SHA256");
                 }
 
                 // Crear el DTO
@@ -52,11 +48,7 @@ namespace NubeCasera.Controllers
                     FechaDeSubida = DateTime.UtcNow,
                     CarpetaLogicaId = AppDBContext.CategoriaPrincipalId
                 };
-            /*
-                var carpeta = Path.Combine("ArchivosSubidos", DateTime.UtcNow.ToString("yyyy"), DateTime.UtcNow.ToString("MM"));
-                Directory.CreateDirectory(carpeta); // Crear si no existe
-                archivoDTO.RutaDeAlmacenamiento = Path.Combine(carpeta, $"{hash}{Path.GetExtension(archivo.FileName)}");
-            */
+
                 // llamar al servicio
                 var resultado = await _archivoReferenciaServ.GuardarArchivoAsync(archivoDTO, archivo);
                 return Ok(resultado);
@@ -98,5 +90,33 @@ namespace NubeCasera.Controllers
                 return StatusCode(500, new {mensaje = "Error al obtener el archivo ", detalle = ex.Message});
             }
         }
+
+
+        [HttpGet("descargar-archivo/{id}")]
+        public async Task<IActionResult> DescargarArchivoAsync(Guid id)
+        {
+            try
+            {
+                var archivo = await _archivoReferenciaServ.DescargarAsync(id);
+                return File(archivo, "application/octet-stream");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { mensaje = ex.Message });
+            }
+            catch (FileNotFoundException ex)
+            {
+                return NotFound(new { mensaje = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al descargar el archivo", detalle = ex.Message });
+            }
+        }
+
     }
 }
