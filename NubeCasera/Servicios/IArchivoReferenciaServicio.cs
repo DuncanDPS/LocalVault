@@ -40,9 +40,15 @@ namespace NubeCasera.Servicios
         public Task<string> CalcularHashArchivoAsync(Stream stream, string tipoHash);
 
         
-        // TODO:      - Task<Stream> DescargarAsync(Guid id)
+        /// <summary>
+        /// Metodo que devuelve el stream del archivo, para luego ser utilizado para construir el File que se retornara al usuario
+        /// </summary>
+        /// <param name="id">Id de la referencia del archivo almacenado en la base de datos</param>
+        /// <returns></returns>
         public Task<Stream> DescargarAsync(Guid id);
 
+
+        
         // TODO:      - Task EliminarAsync(Guid id)
 
     }
