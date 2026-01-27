@@ -43,6 +43,7 @@ namespace NubeCasera.Migrations
                     MimeType = table.Column<string>(type: "TEXT", nullable: false),
                     TamanioBytes = table.Column<long>(type: "INTEGER", nullable: false),
                     EstaEliminado = table.Column<bool>(type: "INTEGER", nullable: false),
+                    FechaDeEliminacion = table.Column<DateTime>(type: "TEXT", nullable: true),
                     carpetaLogicaID = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>

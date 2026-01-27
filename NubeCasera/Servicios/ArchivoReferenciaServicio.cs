@@ -228,16 +228,36 @@ namespace NubeCasera.Servicios
             return File.OpenRead(rutaCompleta);
         }
 
-
-        private async Task<bool> VerificarHashAsync(string rutaArchivo, string hashEsperado, string tipoHash)
+        public async Task ELiminarAsync(Guid id)
         {
-            if(!File.Exists(rutaArchivo)) return false;
+            // validamos que el id no sea nulo
+            if(id == Guid.Empty) throw new ArgumentNullException("El id esta vacio");
+            var archivoReferencia = await _appDBContext.archivoReferencias.FindAsync(id);
+            if(archivoReferencia == null) throw new KeyNotFoundException($"No se encontro el archivo con ID: {id} o este no existe.");
 
-            using var stream = File.OpenRead(rutaArchivo);
-            string hashCalculado = await CalcularHashAsync(stream,tipoHash);
+            
+            // eliminamos el archivo fisico del disco
+            var rutaCompleta = Path.Combine(archivoReferencia.RutaDeAlmacenamiento, archivoReferencia.Nombre);    
+            if (File.Exists(rutaCompleta))
+            {
+                // comparar hash
+                bool esCorrecto = await VerificarHashAsync(rutaCompleta, archivoReferencia.Hash, archivoReferencia.TipoHash);
 
-            return string.Equals(hashCalculado, hashEsperado, StringComparison.OrdinalIgnoreCase);
+                if (esCorrecto)
+                {
+                    File.Delete(rutaCompleta);
+                }
+            }
+            else
+            {
+             throw new InvalidOperationException("No se pudo eliminar el archivo");   
+            }
+
+            archivoReferencia.EstaEliminado = true;
+            archivoReferencia.FechaDeEliminacion = DateTime.UtcNow;
+            await _appDBContext.SaveChangesAsync();
         }
+
 
         // metodo privado para uso interno
         private async Task<string> CalcularHashAsync(Stream stream, string tipoHash = "SHA256")
@@ -263,6 +283,14 @@ namespace NubeCasera.Servicios
             return await CalcularHashAsync(stream, tipoHash);
         }
 
+        private async Task<bool> VerificarHashAsync(string rutaArchivo, string hashEsperado, string tipoHash)
+        {
+            if(!File.Exists(rutaArchivo)) return false;
 
+            using var stream = File.OpenRead(rutaArchivo);
+            string hashCalculado = await CalcularHashAsync(stream,tipoHash);
+
+            return string.Equals(hashCalculado, hashEsperado, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

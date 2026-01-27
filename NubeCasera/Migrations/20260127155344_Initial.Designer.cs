@@ -11,7 +11,7 @@ using NubeCasera.Datos;
 namespace NubeCasera.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20260124173320_Initial")]
+    [Migration("20260127155344_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -31,6 +31,9 @@ namespace NubeCasera.Migrations
 
                     b.Property<string>("Extension")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("FechaDeEliminacion")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("FechaDeSubida")

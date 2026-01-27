@@ -13,6 +13,7 @@ public class ArchivoReferenciaDTO_Add
     public string MimeType {get; set;} = string.Empty;
     public long TamanioBytes {get; set;}
     public bool EstaEliminado {get; set;} = false;
+    public DateTime? FechaDeEliminacion {get; set;}
 
     // Referencia a la carpeta logica
     public Guid CarpetaLogicaId {get; set;}

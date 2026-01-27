@@ -15,6 +15,7 @@
         public string MimeType { get; set; } = string.Empty;
         public long TamanioBytes { get; set; }
         public bool EstaEliminado { get; set; } = false;
+        public DateTime? FechaDeEliminacion {get; set;}
 
         public Categoria? carpetaLogica { get; set; } = null;
         public Guid? carpetaLogicaID { get; set; }

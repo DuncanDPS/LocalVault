@@ -48,8 +48,7 @@ namespace NubeCasera.Servicios
         public Task<Stream> DescargarAsync(Guid id);
 
 
-        
         // TODO:      - Task EliminarAsync(Guid id)
-
+        public Task ELiminarAsync(Guid id);
     }
 }

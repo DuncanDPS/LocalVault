@@ -14,6 +14,9 @@ public class ArchivoReferenciaDTO
         public string MimeType { get; set; } = string.Empty;
         public long TamanioBytes { get; set; }
         public bool EstaEliminado { get; set; }
+        
+        public DateTime? FechaDeEliminacion {get; set;}
+
 
         // Datos de la carpeta lógica que se mostrarán
         public Guid? CarpetaLogicaId { get; set; }

@@ -22,6 +22,16 @@ namespace NubeCasera.Datos
             modelBuilder.Entity<Categoria>().HasData(
                 new Categoria { ID = CategoriaPrincipalId, NombreCategoria = "Principal" }
                 );
+
+            // filtro para excluir los archivos eliminados
+            modelBuilder.Entity<ArchivoReferencia>().HasQueryFilter(f => !f.EstaEliminado);
+
+            // Índices para mejorar performance
+            modelBuilder.Entity<ArchivoReferencia>()
+                .HasIndex(f => f.EstaEliminado);
+
+            modelBuilder.Entity<ArchivoReferencia>()
+                .HasIndex(f => f.FechaDeEliminacion);
         }
 
 

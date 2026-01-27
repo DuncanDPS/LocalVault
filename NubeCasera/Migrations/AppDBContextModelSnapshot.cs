@@ -30,6 +30,9 @@ namespace NubeCasera.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("FechaDeEliminacion")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("FechaDeSubida")
                         .HasColumnType("TEXT");
 
