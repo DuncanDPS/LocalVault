@@ -118,5 +118,19 @@ namespace NubeCasera.Controllers
             }
         }
 
+        [HttpPut("eliminar-archivo/{id}")]
+        public async Task<IActionResult> EliminarArchivoAsync(Guid id)
+        {
+            try
+            {
+                await _archivoReferenciaServ.ELiminarAsync(id);
+                return Ok(new { mensaje = "Archivo eliminado correctamente9a80b6de-ff00-40cc-abb8-bc50de63f2d6"});
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new {mensaje = "Error al eliminar el archivo: ", detalle = ex.Message});
+            }
+        }
+
     }
 }
