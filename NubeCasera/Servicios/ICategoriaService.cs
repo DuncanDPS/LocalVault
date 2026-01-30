@@ -4,5 +4,5 @@ namespace NubeCasera.Servicios;
 
 public class ICategoriaService
 {
-
+    
 }

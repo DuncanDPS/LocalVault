@@ -31,9 +31,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// app.MapGet("/", () =>
-// {
-//    return "Hola mundo";
-// });
-
 app.Run();
