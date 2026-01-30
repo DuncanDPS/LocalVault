@@ -9,6 +9,7 @@ namespace NubeCasera.Dtos
         public Guid? CategoriaPadreID { get; set; } = Guid.Empty;
         public Categoria? CategoriaPadre { get; set; } = null;
         public List<Categoria>? SubCategorias { get; set; }
+        public List<ArchivoReferenciaDTO>? archivoReferencias {get; set;}
 
     }
 }
