@@ -41,4 +41,28 @@ public class CategoriaService : ICategoriaService
         return CategoriaDTO;
 
     }
+
+    public async Task<bool> InsertarArchivo(Guid ID_archivo_referencia, Guid ID_Categoria)
+    {
+        // como funciona este metodo ?
+
+        // 1. validar que los GUID no sean nulos
+        if(ID_archivo_referencia == Guid.Empty || ID_Categoria == Guid.Empty ) throw new KeyNotFoundException("Los ID son invalidos");
+
+        // buscar el archivoReferencia segun su ID y Buscar la Categoria segun su ID
+        var archivoRef = await _appDbContext.archivoReferencias.FindAsync(ID_archivo_referencia);
+        var categoria = await _appDbContext.categorias.FindAsync(ID_Categoria);
+
+        if(archivoRef == null || categoria == null)
+        {
+            throw new InvalidOperationException("No existe archivo referencia o categoria");
+        }
+
+        
+
+
+
+
+        throw new NotImplementedException();
+    }
 }
