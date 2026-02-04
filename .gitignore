@@ -372,6 +372,9 @@ Desktop.ini
 # Logs, DB, local settings
 *.log
 *.db
+*.db-wal
+*.db-shm
+.xdp-*
 appsettings.Development.json
 secrets.json
 
