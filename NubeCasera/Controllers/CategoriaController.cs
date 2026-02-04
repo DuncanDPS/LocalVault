@@ -31,7 +31,19 @@ namespace NubeCasera.Controllers
             }
         }
 
-        
+        [HttpPatch("insertar-archivo-en-categoria/{ID_archivo_referencia}/{ID_Categoria}")]
+        public async Task<IActionResult> InsertarArchivoEnCategoria(Guid ID_archivo_referencia, Guid ID_Categoria)
+        {
+            try
+            {
+                var resultado = await _categoriaService.InsertarArchivo(ID_archivo_referencia, ID_Categoria);
+                return Ok(new {Mensaje = "Archivo insertado en categoria exitosamente", Exito = resultado});
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new {Mensaje = "Error al insertar archivo en categoria", e.Message});
+            }
+        }
 
     }
 }

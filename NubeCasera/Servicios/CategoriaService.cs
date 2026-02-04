@@ -59,10 +59,9 @@ public class CategoriaService : ICategoriaService
         }
 
         // TODO : CONTINUAR CON LA IMPLEMENTACION
-
-
-
-
-        throw new NotImplementedException();
+        archivoRef.carpetaLogicaID = categoria.ID; // ASIGNAR LA CATEGORIA AL ARCHIVO REFERENCIA
+        await _appDbContext.SaveChangesAsync();
+        
+        return true;
     }
 }
