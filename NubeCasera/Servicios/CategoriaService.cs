@@ -58,7 +58,7 @@ public class CategoriaService : ICategoriaService
             throw new InvalidOperationException("No existe archivo referencia o categoria");
         }
 
-        // TODO : CONTINUAR CON LA IMPLEMENTACION
+        
         archivoRef.carpetaLogicaID = categoria.ID; // ASIGNAR LA CATEGORIA AL ARCHIVO REFERENCIA
         await _appDbContext.SaveChangesAsync();
         
