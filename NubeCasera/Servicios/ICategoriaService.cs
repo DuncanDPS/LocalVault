@@ -23,8 +23,10 @@ public interface ICategoriaService
     /// <param name="ID_Categoria">Id de la categoria donde se quiere insertar el archivo</param>
     /// <returns>true si el archivo se inserto correctamente, de lo contrario false</returns>
     public Task<bool> InsertarArchivo(Guid ID_archivo_referencia, Guid ID_Categoria);
-    
 
+    // TODO: Implementar este metodo, tener en cuenta que Eliminar Categoria por su ID, sin envargo el usuario debe aceptar que se eliminaran todos los archivos referencia relacionados a esta categoria, es decir, se eliminara la carpeta logica y su contenido.
+    public Task<bool> EliminarCategoria(Guid ID_Categoria);
+    
 
 
 }
