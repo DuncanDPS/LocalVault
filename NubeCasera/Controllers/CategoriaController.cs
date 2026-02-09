@@ -27,7 +27,7 @@ namespace NubeCasera.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode(500, new {Mensaje = "Error al crear categoria ", e.Message});
+                return StatusCode(500, new { Mensaje = "Error al crear categoria ", e.Message });
             }
         }
 
@@ -37,13 +37,27 @@ namespace NubeCasera.Controllers
             try
             {
                 var resultado = await _categoriaService.InsertarArchivo(ID_archivo_referencia, ID_Categoria);
-                return Ok(new {Mensaje = "Archivo insertado en categoria exitosamente", Exito = resultado});
+                return Ok(new { Mensaje = "Archivo insertado en categoria exitosamente", Exito = resultado });
             }
             catch (Exception e)
             {
-                return StatusCode(500, new {Mensaje = "Error al insertar archivo en categoria", e.Message});
+                return StatusCode(500, new { Mensaje = "Error al insertar archivo en categoria", e.Message });
             }
         }
 
+        [HttpDelete("eliminar-categoria/{ID_Categoria}")]
+        public async Task<IActionResult> EliminarCategoria(Guid ID_Categoria)
+        {
+            try
+            {
+                var resultado = await _categoriaService.EliminarCategoria(ID_Categoria);
+                return Ok(new { Mensaje = "Categoria eliminada exitosamente", Exito = resultado });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { Mensaje = "Error al eliminar categoria", e.Message });
+            }
+
+        }
     }
 }
