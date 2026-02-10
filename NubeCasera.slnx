@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="Front/Front.csproj" Id="30b0f987-99cf-424d-8233-655b73007f2a" />
   <Project Path="NubeCasera/NubeCasera.csproj" />
 </Solution>
