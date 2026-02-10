@@ -14,8 +14,9 @@ builder.Services.AddOpenApi();
 // inyeccion de dependencias de EFCORE
 builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefConnection")));
 
-// inyectar el servicio IArchivoReferencia
+// inyectar el servicio IArchivoReferencia y ICategoriaService
 builder.Services.AddScoped<IArchivoReferenciaServicio, ArchivoReferenciaServicio>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
 var app = builder.Build();
 
@@ -30,10 +31,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// app.MapGet("/", () =>
-// {
-//    return "Hola mundo";
-// });
 
 app.Run();

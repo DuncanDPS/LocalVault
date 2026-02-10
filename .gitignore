@@ -361,3 +361,36 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+# OTHER STUFF
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Logs, DB, local settings
+*.log
+*.db
+*.db-wal
+*.db-shm
+.xdp-*
+appsettings.Development.json
+secrets.json
+
+# Visual Studio Code
+.vscode/
+
+# Visual Studio / .NET
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# Build folders
+bin/
+obj/
