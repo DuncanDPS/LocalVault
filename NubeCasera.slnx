@@ -1,5 +1,5 @@
 <Solution>
   <Project Path="Front/Front.csproj" Id="30b0f987-99cf-424d-8233-655b73007f2a" />
-  <Project Path="Models/Models.csproj" Id="56fda412-a9e1-4efb-ad1f-d0fce6f33629" />
+  <Project Path="Models/DTOModels.csproj" Id="56fda412-a9e1-4efb-ad1f-d0fce6f33629" />
   <Project Path="NubeCasera/NubeCasera.csproj" />
 </Solution>
