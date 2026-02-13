@@ -1,5 +1,5 @@
 ﻿using NubeCasera.Clases;
-using NubeCasera.Dtos;
+using DTOModels.DTOs;
 using NubeCasera.Datos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;

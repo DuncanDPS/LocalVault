@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NubeCasera.Clases;
 using NubeCasera.Servicios;
-using NubeCasera.Dtos;
+using DTOModels.DTOs;
 
 namespace NubeCasera.Controllers
 {

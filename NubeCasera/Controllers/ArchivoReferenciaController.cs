@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NubeCasera.Datos;
-using NubeCasera.Dtos;
+using DTOModels.DTOs;
 using NubeCasera.Servicios;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;

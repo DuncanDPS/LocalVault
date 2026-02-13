@@ -1,5 +1,5 @@
 using System;
-using NubeCasera.Dtos;
+using DTOModels.DTOs;
 
 namespace NubeCasera.Servicios;
 
