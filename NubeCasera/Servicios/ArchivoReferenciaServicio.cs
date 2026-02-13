@@ -88,7 +88,6 @@ namespace NubeCasera.Servicios
             return archivos;
         }
 
-        // TODO: Implementar almacenamiento físico de archivos con consistencia transaccional respecto a la metadata
         public async Task<ArchivoReferenciaDTO> GuardarArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO, IFormFile archivoFisico)
         {
             try

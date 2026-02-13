@@ -5,6 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+	  
+		  <!-- Desarrollo: sin AOT -->
+		  <RunAOTCompilation Condition="'$(Configuration)' == 'Release'">true</RunAOTCompilation>
+		  <RunAOTCompilation Condition="'$(Configuration)' == 'Debug'">false</RunAOTCompilation>
+	 
   </PropertyGroup>
 
   <ItemGroup>
