@@ -64,6 +64,10 @@ namespace NubeCasera.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("EstaEliminado");
+
+                    b.HasIndex("FechaDeEliminacion");
+
                     b.HasIndex("carpetaLogicaID");
 
                     b.ToTable("archivoReferencias");

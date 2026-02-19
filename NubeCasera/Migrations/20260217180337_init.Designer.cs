@@ -11,8 +11,8 @@ using NubeCasera.Datos;
 namespace NubeCasera.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20260127155344_Initial")]
-    partial class Initial
+    [Migration("20260217180337_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,6 +66,10 @@ namespace NubeCasera.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("EstaEliminado");
+
+                    b.HasIndex("FechaDeEliminacion");
 
                     b.HasIndex("carpetaLogicaID");
 

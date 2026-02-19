@@ -1,4 +1,5 @@
 using Front;
+using Front.Servicios;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -9,13 +10,11 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Configuracion HttpClient 
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("http://localhost:5158")
+    BaseAddress = new Uri("https://localhost:7181/")
 });
 
-//// Registrar Servicios
-//builder.Services.AddScoped<Servicios.ICategoriaService, Servicios.CategoriaService>();
-
-
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+// ✅ DESCOMENTAR Y REGISTRAR SERVICIOS
+builder.Services.AddScoped<IArchivoService, ArchivoService>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
 await builder.Build().RunAsync();

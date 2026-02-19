@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace NubeCasera.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -65,6 +65,16 @@ namespace NubeCasera.Migrations
                 name: "IX_archivoReferencias_carpetaLogicaID",
                 table: "archivoReferencias",
                 column: "carpetaLogicaID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_archivoReferencias_EstaEliminado",
+                table: "archivoReferencias",
+                column: "EstaEliminado");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_archivoReferencias_FechaDeEliminacion",
+                table: "archivoReferencias",
+                column: "FechaDeEliminacion");
 
             migrationBuilder.CreateIndex(
                 name: "IX_categorias_CategoriaPadreID",

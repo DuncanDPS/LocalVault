@@ -136,5 +136,18 @@ public class CategoriaService : ICategoriaService
         return true;
     }
 
+    public async Task<List<CategoriaDTO>> ObtenerCategoriasAsync()
+    {
+        var categorias = await _appDbContext.categorias
+    .Include(c => c.archivosReferencias)
+    .ToListAsync();
 
+        return categorias.Select(c => new CategoriaDTO
+        {
+            Id = c.ID,
+            NombreCategoria = c.NombreCategoria,
+            CategoriaPadreID = c.CategoriaPadreID,
+            CantidadArchivos = c.archivosReferencias?.Count ?? 0
+        }).ToList();
+    }
 }

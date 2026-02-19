@@ -59,5 +59,20 @@ namespace NubeCasera.Controllers
             }
 
         }
+
+        
+        [HttpGet]
+        public async Task<IActionResult> ObtenerCategoriasAsync()
+        {
+            try
+            {
+                var categorias = await _categoriaService.ObtenerCategoriasAsync();
+                return Ok(categorias);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { Mensaje = "Error al obtener categorías", e.Message });
+            }
+        }
     }
 }

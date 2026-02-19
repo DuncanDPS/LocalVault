@@ -36,5 +36,7 @@ public interface ICategoriaService
     public Task<bool> EliminarCategoria(Guid ID_Categoria);
     
 
+    public Task<List<CategoriaDTO>> ObtenerCategoriasAsync();
+
 
 }

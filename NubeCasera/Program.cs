@@ -18,6 +18,16 @@ builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite(builder
 builder.Services.AddScoped<IArchivoReferenciaServicio, ArchivoReferenciaServicio>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
+
+// configuracion de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorWasm",
+        policy => policy.WithOrigins("http://localhost:5138", "https://localhost:7293")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +35,11 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+
+
+
+app.UseCors("AllowBlazorWasm");
 
 app.UseHttpsRedirection();
 
