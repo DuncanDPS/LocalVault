@@ -1,0 +1,17 @@
+﻿@page "/subir-archivo"
+@using System.IO
+@inject Front.Servicios.IArchivoService ArchivoService
+@inject Front.Servicios.ICategoriaService CategoriaService
+
+<h3>Subir Archivo</h3>
+
+<div>
+    <InputFile onchange="LoadFiles"></InputFile>
+</div>
+
+@code {
+    private void LoadFiles(InputFileChangeEventArgs e)
+    {
+        
+    }
+}
