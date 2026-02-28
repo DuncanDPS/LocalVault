@@ -39,5 +39,31 @@ namespace Front.Servicios
             var response = await _httpClient.DeleteAsync($"api/ArchivoReferencia/{id}");
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task<ArchivoReferenciaDTO> SubirArchivoAsync(byte[] contenido, string nombreArchivo)
+        {
+            // Crear el contenido multipart/form-data
+            using var content = new MultipartFormDataContent();
+
+            // Crear el  archivo como ByteArrayContent
+            var fileContent = new ByteArrayContent(contenido);
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+
+            // Agregar el archivo con el nombre "archivo" (debe coincidir con lo que espera el backend)
+            content.Add(fileContent, "archivo", nombreArchivo);
+
+            // Hacer POST a la API
+            var response = await _httpClient.PostAsync("api/ArchivoReferencia/subir-archivo", content);
+            response.EnsureSuccessStatusCode();
+
+            // Deserializar y retornar el resultado
+            return await response.Content.ReadFromJsonAsync<ArchivoReferenciaDTO>()
+                ?? throw new Exception("Error al procesar respuesta del servidor");
+
+
+
+
+
+        }
     }
 }

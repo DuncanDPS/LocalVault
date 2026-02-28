@@ -2,16 +2,35 @@
 @using System.IO
 @inject Front.Servicios.IArchivoService ArchivoService
 @inject Front.Servicios.ICategoriaService CategoriaService
+@inject NavigationManager Navigation
 
-<h3>Subir Archivo</h3>
+<PageTitle>Subir Archivo - NubeCasera</PageTitle>
 
-<div>
-    <InputFile onchange="LoadFiles"></InputFile>
+<div class="container-fluid">
+    <h1 class="text-center">Subir Archivo</h1>
+</div> 
+<div class="container">
+    <div>Seleccionar Archivo: </div>
+    <InputFile OnChange="SubirArchivoMetodo"/>
+    
 </div>
+    
+
 
 @code {
-    private void LoadFiles(InputFileChangeEventArgs e)
+
+    public async Task SubirArchivoMetodo(InputFileChangeEventArgs e)
     {
-        
+        var archivo = e.File;
+        if(archivo != null)
+        {
+            using var stream = archivo.OpenReadStream(maxAllowedSize: 512000000); // 500mb
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var bytes = memoryStream.ToArray();
+
+            await ArchivoService.SubirArchivoAsync(bytes, archivo.Name);
+            Navigation.NavigateTo("/archivos");
+        }
     }
 }
