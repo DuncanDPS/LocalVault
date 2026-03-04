@@ -11,8 +11,8 @@ using NubeCasera.Datos;
 namespace NubeCasera.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20260217180337_init")]
-    partial class init
+    [Migration("20260304155405_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
