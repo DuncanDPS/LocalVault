@@ -5,6 +5,7 @@ using DTOModels.DTOs;
 using NubeCasera.Servicios;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
+using NubeCasera.Clases;
 
 namespace NubeCasera.Controllers
 {
@@ -97,8 +98,10 @@ namespace NubeCasera.Controllers
         {
             try
             {
-                var archivo = await _archivoReferenciaServ.DescargarAsync(id);
-                return File(archivo, "application/octet-stream");
+                // Desestructuramos la tupla recibida
+                var (contenido, nombreArchivo) = await _archivoReferenciaServ.DescargarAsync(id);
+                // Agregamos el nombre como tercer parámetro
+                return File(contenido, "application/octet-stream", nombreArchivo);
             }
             catch (KeyNotFoundException ex)
             {
@@ -118,7 +121,7 @@ namespace NubeCasera.Controllers
             }
         }
 
-        [HttpPut("eliminar-archivo/{id}")]
+        [HttpDelete("eliminar-archivo/{id}")]
         public async Task<IActionResult> EliminarArchivoAsync(Guid id)
         {
             try

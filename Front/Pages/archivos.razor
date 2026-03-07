@@ -64,10 +64,11 @@ else
         archivos = await ArchivoService.ObtenerArchivosAsync();
     }
 
-    private async Task DescargarArchivo(Guid id)
+    void DescargarArchivo(Guid id)
     {
-        var stream = await ArchivoService.DescargarArchivoAsync(id);
-        // Implementar lógica de descarga
+        Navigation.NavigateTo($"https://localhost:7181/api/ArchivoReferencia/descargar-archivo/{id}", forceLoad: true);
+        // o si prefieres http:
+        // Navigation.NavigateTo($"http://localhost:5158/api/ArchivoReferencia/descargar-archivo/{id}", forceLoad: true);
     }
 
     private async Task EliminarArchivo(Guid id)

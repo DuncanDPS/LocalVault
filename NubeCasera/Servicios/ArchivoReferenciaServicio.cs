@@ -204,7 +204,7 @@ namespace NubeCasera.Servicios
         }
 
         
-        public async Task<Stream> DescargarAsync(Guid id)
+        public async Task<(Stream archivo, string nombre)> DescargarAsync(Guid id)
         {
             // 1. validar el id que no sea nulo  y que exista un un archivo con ese id
             if(id == Guid.Empty) throw new ArgumentNullException("El id esta vacio");
@@ -222,9 +222,10 @@ namespace NubeCasera.Servicios
             bool hashValido = await VerificarHashAsync(rutaCompleta,archivoReferencia.Hash,archivoReferencia.TipoHash);
 
             if(!hashValido) throw new InvalidOperationException("El archivo esta corrupto o ha sido modificado");
-
+            // abrimos el stream
+            var stream = File.OpenRead(rutaCompleta);
             // devolver un stream
-            return File.OpenRead(rutaCompleta);
+            return (stream, archivoReferencia.Nombre);
         }
 
         public async Task ELiminarAsync(Guid id)

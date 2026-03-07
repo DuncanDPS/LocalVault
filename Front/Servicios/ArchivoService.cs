@@ -13,7 +13,6 @@ namespace Front.Servicios
 
         public async Task<List<ArchivoReferenciaDTO>> ObtenerArchivosAsync(Guid? categoriaId = null)
         {
-            // ✅ CORREGIR LA RUTA
             var url = categoriaId.HasValue
                 ? $"api/ArchivoReferencia/obtener-archivos/{categoriaId}"
                 : "api/ArchivoReferencia/obtener-archivos";
@@ -24,19 +23,18 @@ namespace Front.Servicios
 
         public async Task<ArchivoReferenciaDTO> ObtenerArchivoAsync(Guid id)
         {
-            // ✅ CORREGIR LA RUTA
             return await _httpClient.GetFromJsonAsync<ArchivoReferenciaDTO>($"api/ArchivoReferencia/obtener-archivo/{id}")
                 ?? throw new Exception("Archivo no encontrado");
         }
 
-        public async Task<Stream> DescargarArchivoAsync(Guid id)
-        {
-            return await _httpClient.GetStreamAsync($"api/ArchivoReferencia/{id}/descargar");
-        }
+        //public async Task<Stream> DescargarArchivoAsync(Guid id)
+        //{
+        //    return await _httpClient.GetStreamAsync($"api/ArchivoReferencia/descargar-archivo/{id}");
+        //}
 
         public async Task EliminarArchivoAsync(Guid id)
         {
-            var response = await _httpClient.DeleteAsync($"api/ArchivoReferencia/{id}");
+            var response = await _httpClient.DeleteAsync($"api/ArchivoReferencia/eliminar-archivo/{id}");
             response.EnsureSuccessStatusCode();
         }
 
@@ -59,11 +57,6 @@ namespace Front.Servicios
             // Deserializar y retornar el resultado
             return await response.Content.ReadFromJsonAsync<ArchivoReferenciaDTO>()
                 ?? throw new Exception("Error al procesar respuesta del servidor");
-
-
-
-
-
         }
     }
 }
