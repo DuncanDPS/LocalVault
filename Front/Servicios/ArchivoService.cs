@@ -1,4 +1,5 @@
 ﻿using DTOModels.DTOs;
+using Microsoft.AspNetCore.Components.Routing;
 using System.Net.Http.Json;
 
 namespace Front.Servicios
@@ -27,10 +28,6 @@ namespace Front.Servicios
                 ?? throw new Exception("Archivo no encontrado");
         }
 
-        //public async Task<Stream> DescargarArchivoAsync(Guid id)
-        //{
-        //    return await _httpClient.GetStreamAsync($"api/ArchivoReferencia/descargar-archivo/{id}");
-        //}
 
         public async Task EliminarArchivoAsync(Guid id)
         {
@@ -57,6 +54,11 @@ namespace Front.Servicios
             // Deserializar y retornar el resultado
             return await response.Content.ReadFromJsonAsync<ArchivoReferenciaDTO>()
                 ?? throw new Exception("Error al procesar respuesta del servidor");
+        }
+
+        public string ObtenerUrlDescarga(Guid id)
+        {
+            return  $"{_httpClient.BaseAddress}api/ArchivoReferencia/descargar-archivo/{id}";
         }
     }
 }

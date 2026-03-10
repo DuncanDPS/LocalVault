@@ -66,9 +66,8 @@ else
 
     void DescargarArchivo(Guid id)
     {
-        Navigation.NavigateTo($"https://localhost:7181/api/ArchivoReferencia/descargar-archivo/{id}", forceLoad: true);
-        // o si prefieres http:
-        // Navigation.NavigateTo($"http://localhost:5158/api/ArchivoReferencia/descargar-archivo/{id}", forceLoad: true);
+        var url = ArchivoService.ObtenerUrlDescarga(id);
+        Navigation.NavigateTo(url, forceLoad: true);
     }
 
     private async Task EliminarArchivo(Guid id)
