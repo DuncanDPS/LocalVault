@@ -1,0 +1,42 @@
+﻿@page "/categorias"
+@using DTOModels.DTOs
+@inject Front.Servicios.IArchivoService ArchivoService
+@inject Front.Servicios.ICategoriaService CategoriaService
+@inject NavigationManager Navigation
+
+<h3>CrearCategoria</h3>
+
+<div class="container-sm">
+    <label>Nombre de Carpeta Nueva</label>
+    <EditForm Model="nuevaCategoria" OnValidSubmit="CrearCategoria">
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <InputText class="form-control" @bind-value="nuevaCategoria.NombreCategoria" placeholder="Ej: Documentos Importantes">
+            </InputText>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <span class="bi bi-folder-plus"></span>
+            Crear Categoria
+        </button>
+
+    </EditForm>
+</div>
+
+
+@code {
+    private CategoriaDTO_Add nuevaCategoria = new();
+
+    private async Task CrearCategoria()
+    {
+        if (!string.IsNullOrWhiteSpace(nuevaCategoria.NombreCategoria))
+        {
+            // implementar / llamar el metodo del servicio
+            await CategoriaService.CrearCategoriaAsync(nuevaCategoria);
+            // reiniciar el formulario despues de crear
+            nuevaCategoria = new CategoriaDTO_Add();
+
+            // redirigimos hacia a los archivos con Navigation
+            Navigation.NavigateTo("/archivos");
+        }
+    }
+}

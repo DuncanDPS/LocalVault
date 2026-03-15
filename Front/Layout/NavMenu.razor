@@ -24,10 +24,37 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Archivos
             </NavLink>
         </div>
+
+        <!--Menú expandible de Categorías-->
+        <div class="nav-item px-3">
+            <div class="nav-link" @onclick="() => expandSubNav = !expandSubNav" style="cursor: pointer;">
+                <span class="bi bi-folder-fill" aria-hidden="true"></span> Categorías
+                <span class="@(expandSubNav ? "bi bi-chevron-down" : "bi bi-chevron-right") float-end"></span>
+            </div>
+            @if (expandSubNav)
+            {
+                <nav class="flex-column ps-3">
+                    <div class="nav-item">
+                        <NavLink class="nav-link sub-item" href="categorias">
+                            <span class="bi bi-gear-fill"></span> Gestionar Categorías
+                        </NavLink>
+                    </div>
+                    <div class="nav-item">
+                        <NavLink class="nav-link sub-item" href="archivos">
+                            <span class="bi bi-grid-fill"></span> Ver Archivos
+                        </NavLink>
+                    </div>
+                </nav>
+            }
+        </div>
+
     </nav>
 </div>
 
 @code {
+
+    private bool expandSubNav;
+
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
