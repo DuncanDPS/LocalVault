@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable">
+<div class="@NavMenuCssClass nav-scrollable navbar-dark bg-dark">
     <nav class="nav flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -33,7 +33,7 @@
             <button class="nav-link d-flex justify-content-between align-items-center w-100 text-start border-0 bg-transparent nav-categorias-header"
                     @onclick="ToggleCategorias"
                     aria-expanded="@expandSubNav">
-                <span>
+                <span class="text-white">
                     <span class="bi bi-folder-fill me-2" aria-hidden="true"></span> Categorias
                 </span>
                 <span class="@(expandSubNav ? "bi bi-chevron-down" : "bi bi-chevron-right")"></span>
@@ -41,8 +41,8 @@
         </div>
             @if (expandSubNav)
             {
-                <div class="collapse ps-3">
-                    <NavLink class="nav-link sub-item" href="categorias">
+                <div class="collapse ps-3 text-primary nav-item">
+                    <NavLink class="nav-link sub-item text-white" href="categorias">
                     <span class="bi bi-gear-fill me-2"></span> Gestionar Categorias
                     </NavLink>
 
@@ -55,7 +55,7 @@
                     @foreach (var categoria in listaCategorias)
                     {
                            
-                        <NavLink class="nav-link sub-item" href="">
+                        <NavLink class=" sub-item" href="">
                             <span class="bi bi-folder me-2"></span>@categoria.NombreCategoria
                             @if (categoria.CantidadArchivos > 0)
                             {
