@@ -27,7 +27,7 @@ namespace Front.Servicios
 
         public async Task<List<CategoriaDTO>> ObtenerCategoriasAsync()
         {
-            return await _httpClient.GetFromJsonAsync<List<CategoriaDTO>>("api/categorias") ?? new List<CategoriaDTO>();
+            return await _httpClient.GetFromJsonAsync<List<CategoriaDTO>>("api/categoria/obtener-categorias") ?? new List<CategoriaDTO>();
         }
     }
 }

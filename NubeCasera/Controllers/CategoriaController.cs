@@ -61,7 +61,7 @@ namespace NubeCasera.Controllers
         }
 
         
-        [HttpGet]
+        [HttpGet("obtener-categorias")]
         public async Task<IActionResult> ObtenerCategoriasAsync()
         {
             try
