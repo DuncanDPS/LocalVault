@@ -4,13 +4,16 @@
 @inject Front.Servicios.ICategoriaService CategoriaService
 @inject NavigationManager Navigation
 
-<h3>CrearCategoria</h3>
+<div class="container-fluid">
+    <h3 class="text-center">CrearCategoria</h3>
+</div>
+
 
 <div class="container-sm">
-    <label>Nombre de Carpeta Nueva</label>
+    @* <label>Nombre de Carpeta Nueva</label> *@
     <EditForm Model="nuevaCategoria" OnValidSubmit="CrearCategoria">
         <div class="mb-3">
-            <label class="form-label">Nombre</label>
+            <label class="form-label">Nombre de Carpeta Nueva</label>
             <InputText class="form-control" @bind-value="nuevaCategoria.NombreCategoria" placeholder="Ej: Documentos Importantes">
             </InputText>
         </div>
@@ -20,6 +23,14 @@
         </button>
 
     </EditForm>
+</div>
+
+@*
+    Aqui mostrare las categorias como cartas con informacion de cuantos 
+    archivos tiene, un boton para eliminar categoria. 
+*@
+<div class="container-fluid">
+    <h3 class="text-center">Carpetas Existentes</h3>
 </div>
 
 
