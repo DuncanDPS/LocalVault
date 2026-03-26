@@ -8,7 +8,7 @@ namespace Front.Servicios
         Task<CategoriaDTO> CrearCategoriaAsync(CategoriaDTO_Add categoria);
         Task EliminarCategoriaAsync(Guid id);
 
-
+        event Action OnCategoriasActualizadas;
 
     }
 }

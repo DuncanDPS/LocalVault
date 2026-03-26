@@ -1,4 +1,5 @@
 ﻿@inject Front.Servicios.ICategoriaService CategoriaService
+@implements IDisposable
 
 <div class="top-row ps-3 navbar navbar-dark bg-dark">
     <div class="container-fluid">
@@ -41,21 +42,17 @@
         </div>
             @if (expandSubNav)
             {
-                <div class="collapse ps-3 text-primary nav-item">
-                    <NavLink class="nav-link sub-item text-white" href="categorias">
+                <div class="collapse nav-item px-3 ">
+
+                    <NavLink class="nav-link" href="categorias">
                     <span class="bi bi-gear-fill me-2"></span> Gestionar Categorias
                     </NavLink>
-
-@*                     <NavLink class="nav-link sub-item" href="archivos">
-                        <span class="bi bi-grid-fill me-2"></span> Ver Archivos
-                    </NavLink> *@
-
                 @if (listaCategorias is not null && listaCategorias.Count > 0)
                 {
                     @foreach (var categoria in listaCategorias)
                     {
                            
-                        <NavLink class=" sub-item" href="">
+                        <NavLink class="text-decoration-none" >
                             <span class="bi bi-folder me-2"></span>@categoria.NombreCategoria
                             @if (categoria.CantidadArchivos > 0)
                             {
@@ -98,6 +95,20 @@
 
     protected override async Task OnInitializedAsync()
     {
+        CategoriaService.OnCategoriasActualizadas += RecargarMenu;
+
+
         listaCategorias = await CategoriaService.ObtenerCategoriasAsync();
+    }
+
+    private async void RecargarMenu()
+    {
+        listaCategorias = await CategoriaService.ObtenerCategoriasAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        CategoriaService.OnCategoriasActualizadas -= RecargarMenu;
     }
 }
