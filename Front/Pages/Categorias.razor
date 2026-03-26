@@ -33,9 +33,27 @@
     <h3 class="text-center">Carpetas Existentes</h3>
 </div>
 
+<div class="row">
+    @foreach(var categoria in categorias)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@categoria.NombreCategoria</h5>
+                    <!--AQUI VAN MAS DATOS-->
+                    <button class="btn btn-danger mt-2">
+                        <span class="bi bi-trash"></span>Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
     private CategoriaDTO_Add nuevaCategoria = new();
+
+    private List<CategoriaDTO> categorias = new List<CategoriaDTO>();
 
     private async Task CrearCategoria()
     {
@@ -50,4 +68,16 @@
             Navigation.NavigateTo("/archivos");
         }
     }
+
+    // metodo para obtener las categorias
+    private async Task ObtenerCategorias()
+    {
+        categorias = await CategoriaService.ObtenerCategoriasAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ObtenerCategorias();
+    }
+
 }
