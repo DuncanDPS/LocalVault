@@ -46,7 +46,7 @@
                         <!--AQUI VAN MAS DATOS-->
                         
                     </div>
-
+                    <!--Ahora me falta poner cuantos archivo tiene la carpeta-->
                     <div class="small text-secondary">
                         Creado el: @categoria.FechaDeCreacion.ToString("dd/MM/yyyy")
                     </div>
@@ -63,6 +63,9 @@
                         <button class="btn btn-danger mt-2" @onclick="() => EliminarCategoria(categoria.Id)">
                             <span class="bi bi-trash"></span>Eliminar
                         </button>
+                    </div>
+                    <div class="small text-secondary">
+                        Creado el: @categoria.FechaDeCreacion.ToString("dd/MM/yyyy")
                     </div>
                 </div>
             </div>
