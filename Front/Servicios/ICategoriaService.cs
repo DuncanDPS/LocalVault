@@ -9,6 +9,6 @@ namespace Front.Servicios
         Task EliminarCategoriaAsync(Guid id);
 
         event Action OnCategoriasActualizadas;
-
+        
     }
 }

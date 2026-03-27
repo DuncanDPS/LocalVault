@@ -36,21 +36,41 @@
 <div class="row">
     @foreach(var categoria in categorias)
     {
-        <div class="col-md-4 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">@categoria.NombreCategoria</h5>
-                    <!--AQUI VAN MAS DATOS-->
-                    <button class="btn btn-danger mt-2">
-                        <span class="bi bi-trash"></span>Eliminar
-                    </button>
+
+        if(categoria.Id == CategoriaPrincipalId)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@categoria.NombreCategoria</h5>
+                        <!--AQUI VAN MAS DATOS-->
+
+                    </div>
                 </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@categoria.NombreCategoria</h5>
+                        <!--AQUI VAN MAS DATOS-->
+                        <button class="btn btn-danger mt-2" @onclick="() => EliminarCategoria(categoria.Id)">
+                            <span class="bi bi-trash"></span>Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
     }
 </div>
 
 @code {
+
+    // ID para la categoria Principal
+    private readonly Guid CategoriaPrincipalId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+
     private CategoriaDTO_Add nuevaCategoria = new();
 
     private List<CategoriaDTO> categorias = new List<CategoriaDTO>();
@@ -64,8 +84,7 @@
             // reiniciar el formulario despues de crear
             nuevaCategoria = new CategoriaDTO_Add();
 
-            // redirigimos hacia a los archivos con Navigation
-            Navigation.NavigateTo("/archivos");
+            await ObtenerCategorias();
         }
     }
 
@@ -73,6 +92,14 @@
     private async Task ObtenerCategorias()
     {
         categorias = await CategoriaService.ObtenerCategoriasAsync();
+    }
+
+    // metodo para eliminar una categoria
+    private async Task EliminarCategoria(Guid categoria_Id)
+    {
+        await CategoriaService.EliminarCategoriaAsync(categoria_Id);
+
+        await ObtenerCategorias();
     }
 
     protected override async Task OnInitializedAsync()

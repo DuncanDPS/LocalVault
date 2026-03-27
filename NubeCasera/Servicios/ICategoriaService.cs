@@ -38,5 +38,5 @@ public interface ICategoriaService
 
     public Task<List<CategoriaDTO>> ObtenerCategoriasAsync();
 
-
+   
 }

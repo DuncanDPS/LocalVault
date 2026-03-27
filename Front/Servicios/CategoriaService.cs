@@ -7,6 +7,7 @@ namespace Front.Servicios
     {
         public event Action OnCategoriasActualizadas;
         private readonly HttpClient _httpClient;
+
         public CategoriaService(HttpClient httpClient)
         {
             _httpClient = httpClient;
