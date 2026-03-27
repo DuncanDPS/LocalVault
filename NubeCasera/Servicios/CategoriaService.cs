@@ -64,7 +64,9 @@ public class CategoriaService : ICategoriaService
             NombreCategoria = categoria.NombreCategoria,
             CategoriaPadreID = categoria.CategoriaPadreID,
             CategoriaPadreNombre = nombreCategoriaPadre,
-            CantidadArchivos = 0
+            CantidadArchivos = 0,
+            FechaDeCreacion = categoria.FechaDeCreacion
+
         };
 
         return categoriaDTO;
@@ -147,7 +149,9 @@ public class CategoriaService : ICategoriaService
             Id = c.ID,
             NombreCategoria = c.NombreCategoria,
             CategoriaPadreID = c.CategoriaPadreID,
-            CantidadArchivos = c.archivosReferencias?.Count ?? 0
+            CantidadArchivos = c.archivosReferencias?.Count ?? 0,
+            FechaDeCreacion = c.FechaDeCreacion
+
         }).ToList();
     }
 }
