@@ -17,7 +17,8 @@ namespace NubeCasera.Migrations
                 {
                     ID = table.Column<Guid>(type: "TEXT", nullable: false),
                     NombreCategoria = table.Column<string>(type: "TEXT", nullable: false),
-                    CategoriaPadreID = table.Column<Guid>(type: "TEXT", nullable: true)
+                    CategoriaPadreID = table.Column<Guid>(type: "TEXT", nullable: true),
+                    FechaDeCreacion = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,8 +59,8 @@ namespace NubeCasera.Migrations
 
             migrationBuilder.InsertData(
                 table: "categorias",
-                columns: new[] { "ID", "CategoriaPadreID", "NombreCategoria" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), null, "Principal" });
+                columns: new[] { "ID", "CategoriaPadreID", "FechaDeCreacion", "NombreCategoria" },
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), null, new DateTime(2026, 3, 27, 19, 33, 41, 742, DateTimeKind.Utc).AddTicks(2448), "Principal" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_archivoReferencias_carpetaLogicaID",

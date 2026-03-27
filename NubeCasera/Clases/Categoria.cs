@@ -8,5 +8,6 @@
         public Categoria? CategoriaPadre { get; set; }
         public List<Categoria>? SubCategorias { get; set; }
         public List<ArchivoReferencia>? archivosReferencias { get; set; }
+        public DateTime FechaDeCreacion { get; init; } = DateTime.UtcNow;
     }
 }

@@ -11,7 +11,7 @@ using NubeCasera.Datos;
 namespace NubeCasera.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20260304155405_InitialCreate")]
+    [Migration("20260327193342_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -85,6 +85,9 @@ namespace NubeCasera.Migrations
                     b.Property<Guid?>("CategoriaPadreID")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("FechaDeCreacion")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("NombreCategoria")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -99,6 +102,7 @@ namespace NubeCasera.Migrations
                         new
                         {
                             ID = new Guid("00000000-0000-0000-0000-000000000001"),
+                            FechaDeCreacion = new DateTime(2026, 3, 27, 19, 33, 41, 742, DateTimeKind.Utc).AddTicks(2448),
                             NombreCategoria = "Principal"
                         });
                 });
