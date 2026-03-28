@@ -44,11 +44,15 @@
                     <div class="card-body">
                         <h5 class="card-title">@categoria.NombreCategoria</h5>
                         <!--AQUI VAN MAS DATOS-->
-                        
+                        <p class="card-text text-muted small">
+                            <i class="bi bi-folder2-open me-1"></i>
+                            @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
+                        </p>
                     </div>
-                    <!--Ahora me falta poner cuantos archivo tiene la carpeta-->
-                    <div class="small text-secondary">
-                        Creado el: @categoria.FechaDeCreacion.ToString("dd/MM/yyyy")
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="small text-secondary">
+                            <i class="bi bi-calendar3"></i> Creado: @categoria.FechaDeCreacion.ToString("dd/MM/yyyy")
+                        </div>
                     </div>
                 </div>
             </div>
@@ -60,12 +64,18 @@
                     <div class="card-body">
                         <h5 class="card-title">@categoria.NombreCategoria</h5>
                         <!--AQUI VAN MAS DATOS-->
+                        <p class="card-text text-muted small">
+                            <i class="bi bi-file-binary-fill"></i>
+                            @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
+                        </p>
                         <button class="btn btn-danger mt-2" @onclick="() => EliminarCategoria(categoria.Id)">
                             <span class="bi bi-trash"></span>Eliminar
                         </button>
                     </div>
-                    <div class="small text-secondary">
-                        Creado el: @categoria.FechaDeCreacion.ToString("dd/MM/yyyy")
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="small text-secondary">
+                            <i class="bi bi-calendar3"></i> Creado: @categoria.FechaDeCreacion.ToString("dd/MM/yyyy")
+                        </div>
                     </div>
                 </div>
             </div>

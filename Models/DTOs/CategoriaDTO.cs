@@ -12,5 +12,6 @@ namespace DTOModels.DTOs
         public List<CategoriaDTO>? SubCategorias { get; set; }
         public int CantidadArchivos { get; set; }
         public DateTime FechaDeCreacion { get; init; }
+        public int CantidadDeArchivos { get; set; }
     }
 }
