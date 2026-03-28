@@ -51,15 +51,15 @@
                 {
                     @foreach (var categoria in listaCategorias)
                     {
-                           
-                        <NavLink class="text-decoration-none" >
+
+                        <NavLink class="nav-link" >
                             <span class="bi bi-folder me-2"></span>@categoria.NombreCategoria
                             @if (categoria.CantidadArchivos > 0)
                             {
                                 <span class="badge bg-secondary ms-1">@categoria.CantidadArchivos</span>
                             }
                         </NavLink>
-                            
+
                     }
                 }
                 else

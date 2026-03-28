@@ -65,7 +65,7 @@
                         <h5 class="card-title">@categoria.NombreCategoria</h5>
                         <!--AQUI VAN MAS DATOS-->
                         <p class="card-text text-muted small">
-                            <i class="bi bi-file-binary-fill"></i>
+                            <i class="bi bi-folder2-open me-1"></i>
                             @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
                         </p>
                         <button class="btn btn-danger mt-2" @onclick="() => EliminarCategoria(categoria.Id)">
