@@ -49,6 +49,9 @@
                             @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
                         </p>
                     </div>
+                    <button class="btn btn-primary mt-2">
+                        <span class="bi bi-folder2-open"></span>Abrir Carpeta
+                    </button>
                     <div class="card-footer bg-transparent border-top-0">
                         <div class="small text-secondary">
                             <i class="bi bi-calendar3"></i> Creado: @categoria.FechaDeCreacion.ToString("dd/MM/yyyy")
@@ -68,6 +71,11 @@
                             <i class="bi bi-folder2-open me-1"></i>
                             @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
                         </p>
+
+                        <button class="btn btn-primary mt-2">
+                            <span class="bi bi-folder2-open"></span>Abrir Carpeta
+                        </button>
+
                         <button class="btn btn-danger mt-2" @onclick="() => EliminarCategoria(categoria.Id)">
                             <span class="bi bi-trash"></span>Eliminar
                         </button>
