@@ -49,7 +49,7 @@
                             @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
                         </p>
                     </div>
-                    <button class="btn btn-primary mt-2">
+                    <button class="btn btn-primary mt-2" @onclick="() => RedireccionarACarpeta(categoria.Id)" >
                         <span class="bi bi-folder2-open"></span>Abrir Carpeta
                     </button>
                     <div class="card-footer bg-transparent border-top-0">
@@ -72,7 +72,7 @@
                             @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
                         </p>
 
-                        <button class="btn btn-primary mt-2">
+                        <button class="btn btn-primary mt-2" @onclick="() => RedireccionarACarpeta(categoria.Id)">
                             <span class="bi bi-folder2-open"></span>Abrir Carpeta
                         </button>
 
@@ -130,6 +130,12 @@
     protected override async Task OnInitializedAsync()
     {
         await ObtenerCategorias();
+    }
+
+    // redireccionar a pagina con los archivos de la carpeta elegida
+    private void RedireccionarACarpeta(Guid IdCategoria)
+    {
+        Navigation.NavigateTo($"/categoria/{IdCategoria}");
     }
 
 }
