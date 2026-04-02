@@ -13,6 +13,8 @@ namespace NubeCasera.Servicios
 
         // inyeccion de la DBContext
         private readonly AppDBContext _appDBContext;
+        // recibimos el id de la categoria principal
+        Guid idCatPrincipal = AppDBContext.CategoriaPrincipalId;
         public ArchivoReferenciaServicio(AppDBContext appDBContext)
         {
             _appDBContext = appDBContext;
