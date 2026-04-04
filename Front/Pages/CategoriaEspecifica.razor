@@ -13,7 +13,7 @@
     <div class="text-end mb-3">
         @* Pasa el IdCategoria como parámetro para saber dónde se subirá el archivo (opcional según tus rutas) *@
         <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo($"/subir-archivo/{IdCategoria}"))">Subir Archivo</button>
-   
+       
         <button class="btn btn-secondary" @onclick="@(() => Navigation.NavigateTo($"/crear-carpeta/{IdCategoria}"))">Crear Carpeta</button> 
     </div>
 </div>
@@ -105,4 +105,13 @@ else
         // await ObtenerArchivos(); // Recargar la lista después de borrar
         await Task.CompletedTask;
     }
+
+
+    // Este metodo nos redirecciona a la pagina para subir archivos con el id de la categoria
+    // a la cual queremos subir el archivo
+    private void RedireccionarASubirArchivo(Guid IdCategoria)
+    {
+        Navigation.NavigateTo($"/subir-archivo/{IdCategoria}");
+    }
+
 }

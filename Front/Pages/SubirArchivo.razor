@@ -1,4 +1,6 @@
 ﻿@page "/subir-archivo"
+@page "/subir-archivo/{CategoriaId:guid}"
+
 @using System.IO
 @inject Front.Servicios.IArchivoService ArchivoService
 @inject Front.Servicios.ICategoriaService CategoriaService
@@ -18,17 +20,21 @@
 
 @code {
 
+    [Parameter]
+    public Guid? CategoriaId { get; set; }
+
     public async Task SubirArchivoMetodo(InputFileChangeEventArgs e)
     {
         var archivo = e.File;
-        if(archivo != null)
+        if (archivo != null)
         {
             using var stream = archivo.OpenReadStream(maxAllowedSize: 512000000); // 500mb
             using var memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
             var bytes = memoryStream.ToArray();
 
-            await ArchivoService.SubirArchivoAsync(bytes, archivo.Name);
+            // Usamos GetValueOrDefault() por si la ruta no traía el Guid, mandará Guid.Empty
+            await ArchivoService.SubirArchivoAsync(bytes, archivo.Name, CategoriaId.GetValueOrDefault());
             Navigation.NavigateTo("/archivos");
         }
     }

@@ -35,7 +35,7 @@ namespace Front.Servicios
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<ArchivoReferenciaDTO> SubirArchivoAsync(byte[] contenido, string nombreArchivo)
+        public async Task<ArchivoReferenciaDTO> SubirArchivoAsync(byte[] contenido, string nombreArchivo, Guid IdCategoria)
         {
             // Crear el contenido multipart/form-data
             using var content = new MultipartFormDataContent();
@@ -46,6 +46,9 @@ namespace Front.Servicios
 
             // Agregar el archivo con el nombre "archivo" (debe coincidir con lo que espera el backend)
             content.Add(fileContent, "archivo", nombreArchivo);
+
+            // Agregar el IdCategoria como texto
+            content.Add(new StringContent(IdCategoria.ToString()), "IdCategoria");
 
             // Hacer POST a la API
             var response = await _httpClient.PostAsync("api/ArchivoReferencia/subir-archivo", content);

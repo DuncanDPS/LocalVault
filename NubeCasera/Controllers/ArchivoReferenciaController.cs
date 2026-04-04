@@ -21,7 +21,7 @@ namespace NubeCasera.Controllers
         }
 
         [HttpPost("subir-archivo")]
-        public async Task<IActionResult> GuardarAsync(IFormFile archivo, Guid? ID_Categoria) // aqui tengo que recibir un id DE CATEGORIA
+        public async Task<IActionResult> GuardarAsync(IFormFile archivo, [FromForm]Guid? IdCategoria) // aqui tengo que recibir un id DE CATEGORIA
         {
             // validar que no sea null
             if(archivo == null)
@@ -37,9 +37,9 @@ namespace NubeCasera.Controllers
                     hash = await _archivoReferenciaServ.CalcularHashArchivoAsync(stream,"SHA256");
                 }
 
-                if(ID_Categoria == null || ID_Categoria == Guid.Empty)
+                if(IdCategoria == null || IdCategoria == Guid.Empty)
                 {
-                    ID_Categoria = AppDBContext.CategoriaPrincipalId;
+                    IdCategoria = AppDBContext.CategoriaPrincipalId;
                 }
 
                 // Crear el DTO
@@ -52,7 +52,7 @@ namespace NubeCasera.Controllers
                     MimeType = archivo.ContentType,
                     TamanioBytes = archivo.Length,
                     FechaDeSubida = DateTime.UtcNow,
-                    CarpetaLogicaId = ID_Categoria
+                    CarpetaLogicaId = IdCategoria
                 };
 
                 // llamar al servicio
