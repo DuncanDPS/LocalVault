@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NubeCasera.Datos;
-using NubeCasera.Dtos;
+using DTOModels.DTOs;
 using NubeCasera.Servicios;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
+using NubeCasera.Clases;
 
 namespace NubeCasera.Controllers
 {
@@ -20,7 +21,7 @@ namespace NubeCasera.Controllers
         }
 
         [HttpPost("subir-archivo")]
-        public async Task<IActionResult> GuardarAsync(IFormFile archivo)
+        public async Task<IActionResult> GuardarAsync(IFormFile archivo, [FromForm]Guid? IdCategoria) // aqui tengo que recibir un id DE CATEGORIA
         {
             // validar que no sea null
             if(archivo == null)
@@ -36,6 +37,11 @@ namespace NubeCasera.Controllers
                     hash = await _archivoReferenciaServ.CalcularHashArchivoAsync(stream,"SHA256");
                 }
 
+                if(IdCategoria == null || IdCategoria == Guid.Empty)
+                {
+                    IdCategoria = AppDBContext.CategoriaPrincipalId;
+                }
+
                 // Crear el DTO
                 var archivoDTO = new ArchivoReferenciaDTO_Add
                 {
@@ -46,11 +52,11 @@ namespace NubeCasera.Controllers
                     MimeType = archivo.ContentType,
                     TamanioBytes = archivo.Length,
                     FechaDeSubida = DateTime.UtcNow,
-                    CarpetaLogicaId = AppDBContext.CategoriaPrincipalId
+                    CarpetaLogicaId = IdCategoria
                 };
 
                 // llamar al servicio
-                var resultado = await _archivoReferenciaServ.GuardarArchivoAsync(archivoDTO, archivo);
+                var resultado = await _archivoReferenciaServ.GuardarArchivoAsync(archivoDTO, archivo); // TODO: AQUI RECIBIR ID DE CATEGORIA
                 return Ok(resultado);
             }
             catch (InvalidOperationException ex)
@@ -97,8 +103,10 @@ namespace NubeCasera.Controllers
         {
             try
             {
-                var archivo = await _archivoReferenciaServ.DescargarAsync(id);
-                return File(archivo, "application/octet-stream");
+                // Desestructuramos la tupla recibida
+                var (contenido, nombreArchivo) = await _archivoReferenciaServ.DescargarAsync(id);
+                // Agregamos el nombre como tercer parámetro
+                return File(contenido, "application/octet-stream", nombreArchivo);
             }
             catch (KeyNotFoundException ex)
             {
@@ -118,7 +126,7 @@ namespace NubeCasera.Controllers
             }
         }
 
-        [HttpPut("eliminar-archivo/{id}")]
+        [HttpDelete("eliminar-archivo/{id}")]
         public async Task<IActionResult> EliminarArchivoAsync(Guid id)
         {
             try

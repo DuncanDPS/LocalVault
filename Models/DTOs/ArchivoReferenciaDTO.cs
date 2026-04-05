@@ -1,9 +1,11 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace NubeCasera.Dtos;
-
-public class ArchivoReferenciaDTO
+namespace DTOModels.DTOs
 {
+    public class ArchivoReferenciaDTO
+    {
         public Guid Id { get; set; }
         public string Nombre { get; set; } = string.Empty;
         public DateTime FechaDeSubida { get; set; }
@@ -14,11 +16,12 @@ public class ArchivoReferenciaDTO
         public string MimeType { get; set; } = string.Empty;
         public long TamanioBytes { get; set; }
         public bool EstaEliminado { get; set; }
-        
-        public DateTime? FechaDeEliminacion {get; set;}
+
+        public DateTime? FechaDeEliminacion { get; set; }
 
 
         // Datos de la carpeta lógica que se mostrarán
         public Guid? CarpetaLogicaId { get; set; }
         public string? CarpetaLogicaNombre { get; set; }
+    }
 }

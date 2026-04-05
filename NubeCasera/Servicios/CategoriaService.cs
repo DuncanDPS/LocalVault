@@ -1,5 +1,5 @@
 using System;
-using NubeCasera.Dtos;
+using DTOModels.DTOs;
 using NubeCasera.Datos;
 using NubeCasera.Clases;
 using Microsoft.EntityFrameworkCore;
@@ -25,23 +25,51 @@ public class CategoriaService : ICategoriaService
             throw new ArgumentNullException(nameof(categoriaNueva));
         }
 
+        // Validar que la categoría padre existe si se especifica
+        if(categoriaNueva.CategoriaPadreID.HasValue && 
+           categoriaNueva.CategoriaPadreID.Value != Guid.Empty)
+        {
+            var categoriaPadreExiste = await _appDbContext.categorias
+                .AnyAsync(c => c.ID == categoriaNueva.CategoriaPadreID.Value);
+
+            if(!categoriaPadreExiste)
+            {
+                throw new KeyNotFoundException("La categoría padre no existe");
+            }
+        }
+
         // crear la categoria
         var categoria = new Categoria
         {
             ID = Guid.NewGuid(),
-            NombreCategoria = categoriaNueva.NombreCategoria, 
+            NombreCategoria = categoriaNueva.NombreCategoria,
+            CategoriaPadreID = categoriaNueva.CategoriaPadreID
         };
         // añadir a bd
         await _appDbContext.categorias.AddAsync(categoria);
         await _appDbContext.SaveChangesAsync();
 
-        var CategoriaDTO = new CategoriaDTO
+        // Cargar el nombre de la categoría padre si existe
+        string? nombreCategoriaPadre = null;
+        if(categoria.CategoriaPadreID.HasValue)
+        {
+            var padre = await _appDbContext.categorias
+                .FindAsync(categoria.CategoriaPadreID.Value);
+            nombreCategoriaPadre = padre?.NombreCategoria;
+        }
+
+        var categoriaDTO = new CategoriaDTO
         {
             Id = categoria.ID,
-            NombreCategoria = categoria.NombreCategoria
+            NombreCategoria = categoria.NombreCategoria,
+            CategoriaPadreID = categoria.CategoriaPadreID,
+            CategoriaPadreNombre = nombreCategoriaPadre,
+            CantidadArchivos = 0,
+            FechaDeCreacion = categoria.FechaDeCreacion
+
         };
 
-        return CategoriaDTO;
+        return categoriaDTO;
 
     }
 
@@ -110,5 +138,20 @@ public class CategoriaService : ICategoriaService
         return true;
     }
 
+    public async Task<List<CategoriaDTO>> ObtenerCategoriasAsync()
+    {
+        var categorias = await _appDbContext.categorias
+    .Include(c => c.archivosReferencias)
+    .ToListAsync();
 
+        return categorias.Select(c => new CategoriaDTO
+        {
+            Id = c.ID,
+            NombreCategoria = c.NombreCategoria,
+            CategoriaPadreID = c.CategoriaPadreID,
+            CantidadArchivos = c.archivosReferencias?.Count ?? 0,
+            FechaDeCreacion = c.FechaDeCreacion
+
+        }).ToList();
+    }
 }

@@ -1,0 +1,93 @@
+﻿@page "/archivos"
+@using DTOModels.DTOs
+@inject Front.Servicios.IArchivoService ArchivoService
+@inject NavigationManager Navigation
+<h3>archivos - NubeCasera</h3>
+
+<div class="container-fluid">
+
+    <h1 class="text-center">Mis Archivos</h1>
+
+    <div class="text-end mb-3">
+        <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo("/subir-archivo"))">Subir Archivo</button>
+   
+        <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo("/subir-archivo"))">Crear Carpeta</button> 
+    </div>
+</div>
+
+@if(archivos == null)
+{
+    <p><em>Cargando archivos...</em></p>
+}
+else if(archivos != null && archivos.Count == 0)
+{
+    <div class="alert alert-info">
+        No hay archivos subidos aún. ¡Sube tu primer archivo para empezar a organizar tu nube casera!
+    </div>
+}
+else
+{
+        <div class="row">
+        @foreach(var archivo in archivos)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@archivo.Nombre</h5>
+                        <p class="card-text">
+                            <small>Tamaño: @FormatFileSize(archivo.TamanioBytes)</small><br />
+                            <small>Fecha: @archivo.FechaDeSubida.ToShortDateString()</small>
+                        </p>
+                        <button class="btn btn-sm btn-primary" @onclick="@(() => DescargarArchivo(archivo.Id))">
+                            Descargar
+                        </button>
+                        <button class="btn btn-sm btn-danger" @onclick="@(() => EliminarArchivo(archivo.Id))">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+
+@code {
+    private List<ArchivoReferenciaDTO>? archivos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarArchivos();
+    }
+
+    private async Task CargarArchivos()
+    {
+        archivos = await ArchivoService.ObtenerArchivosAsync();
+    }
+
+    void DescargarArchivo(Guid id)
+    {
+        var url = ArchivoService.ObtenerUrlDescarga(id);
+        Navigation.NavigateTo(url, forceLoad: true);
+    }
+
+    private async Task EliminarArchivo(Guid id)
+    {
+        await ArchivoService.EliminarArchivoAsync(id);
+        await CargarArchivos();
+    }
+
+    private string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB" };
+        double len = bytes;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len = len / 1024;
+        }
+        return $"{len:0.##} {sizes[order]}";
+    }
+}

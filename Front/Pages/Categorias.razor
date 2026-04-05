@@ -1,0 +1,141 @@
+﻿@page "/categorias"
+@using DTOModels.DTOs
+@inject Front.Servicios.IArchivoService ArchivoService
+@inject Front.Servicios.ICategoriaService CategoriaService
+@inject NavigationManager Navigation
+
+<div class="container-fluid">
+    <h3 class="text-center">CrearCategoria</h3>
+</div>
+
+
+<div class="container-sm">
+    @* <label>Nombre de Carpeta Nueva</label> *@
+    <EditForm Model="nuevaCategoria" OnValidSubmit="CrearCategoria">
+        <div class="mb-3">
+            <label class="form-label">Nombre de Carpeta Nueva</label>
+            <InputText class="form-control" @bind-value="nuevaCategoria.NombreCategoria" placeholder="Ej: Documentos Importantes">
+            </InputText>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <span class="bi bi-folder-plus"></span>
+            Crear Categoria
+        </button>
+
+    </EditForm>
+</div>
+
+@*
+    Aqui mostrare las categorias como cartas con informacion de cuantos 
+    archivos tiene, un boton para eliminar categoria. 
+*@
+<div class="container-fluid">
+    <h3 class="text-center">Carpetas Existentes</h3>
+</div>
+
+<div class="row">
+    @foreach(var categoria in categorias)
+    {
+
+        if(categoria.Id == CategoriaPrincipalId)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@categoria.NombreCategoria</h5>
+                        <!--AQUI VAN MAS DATOS-->
+                        <p class="card-text text-muted small">
+                            <i class="bi bi-folder2-open me-1"></i>
+                            @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
+                        </p>
+                    </div>
+                    <button class="btn btn-primary mt-2" @onclick="() => RedireccionarACarpeta(categoria.Id)" >
+                        <span class="bi bi-folder2-open"></span>Abrir Carpeta
+                    </button>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="small text-secondary">
+                            <i class="bi bi-calendar3"></i> Creado: @categoria.FechaDeCreacion.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@categoria.NombreCategoria</h5>
+                        <!--AQUI VAN MAS DATOS-->
+                        <p class="card-text text-muted small">
+                            <i class="bi bi-folder2-open me-1"></i>
+                            @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
+                        </p>
+
+                        <button class="btn btn-primary mt-2" @onclick="() => RedireccionarACarpeta(categoria.Id)">
+                            <span class="bi bi-folder2-open"></span>Abrir Carpeta
+                        </button>
+
+                        <button class="btn btn-danger mt-2" @onclick="() => EliminarCategoria(categoria.Id)">
+                            <span class="bi bi-trash"></span>Eliminar
+                        </button>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="small text-secondary">
+                            <i class="bi bi-calendar3"></i> Creado: @categoria.FechaDeCreacion.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+
+    // ID para la categoria Principal
+    private readonly Guid CategoriaPrincipalId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+
+    private CategoriaDTO_Add nuevaCategoria = new();
+
+    private List<CategoriaDTO> categorias = new List<CategoriaDTO>();
+
+    private async Task CrearCategoria()
+    {
+        if (!string.IsNullOrWhiteSpace(nuevaCategoria.NombreCategoria))
+        {
+            // implementar / llamar el metodo del servicio
+            await CategoriaService.CrearCategoriaAsync(nuevaCategoria);
+            // reiniciar el formulario despues de crear
+            nuevaCategoria = new CategoriaDTO_Add();
+
+            await ObtenerCategorias();
+        }
+    }
+
+    // metodo para obtener las categorias
+    private async Task ObtenerCategorias()
+    {
+        categorias = await CategoriaService.ObtenerCategoriasAsync();
+    }
+
+    // metodo para eliminar una categoria
+    private async Task EliminarCategoria(Guid categoria_Id)
+    {
+        await CategoriaService.EliminarCategoriaAsync(categoria_Id);
+
+        await ObtenerCategorias();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ObtenerCategorias();
+    }
+
+    // redireccionar a pagina con los archivos de la carpeta elegida
+    private void RedireccionarACarpeta(Guid IdCategoria)
+    {
+        Navigation.NavigateTo($"/categoria/{IdCategoria}");
+    }
+
+}

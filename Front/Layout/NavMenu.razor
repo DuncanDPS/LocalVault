@@ -1,0 +1,114 @@
+﻿@inject Front.Servicios.ICategoriaService CategoriaService
+@implements IDisposable
+
+<div class="top-row ps-3 navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Front</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable navbar-dark bg-dark">
+    <nav class="nav flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill me-2" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="subir-archivo">
+                <span class="bi bi-plus-square-fill me-2" aria-hidden="true"></span> Subir Archivo
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="archivos">
+                <span class="bi bi-list-nested me-2" aria-hidden="true"></span> Archivos
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <button class="nav-link d-flex justify-content-between align-items-center w-100 text-start border-0 bg-transparent nav-categorias-header"
+                    @onclick="ToggleCategorias"
+                    aria-expanded="@expandSubNav">
+                <span class="text-white">
+                    <span class="bi bi-folder-fill me-2" aria-hidden="true"></span> Categorias
+                </span>
+                <span class="@(expandSubNav ? "bi bi-chevron-down" : "bi bi-chevron-right")"></span>
+            </button>
+        </div>
+            @if (expandSubNav)
+            {
+                <div class="collapse nav-item px-3 ">
+
+                    <NavLink class="nav-link" href="categorias">
+                    <span class="bi bi-gear-fill me-2"></span> Gestionar Categorias
+                    </NavLink>
+                @if (listaCategorias is not null && listaCategorias.Count > 0)
+                {
+                    @foreach (var categoria in listaCategorias)
+                    {
+
+                        <NavLink class="nav-link" >
+                            <span class="bi bi-folder me-2"></span>@categoria.NombreCategoria
+                            @if (categoria.CantidadArchivos > 0)
+                            {
+                                <span class="badge bg-secondary ms-1">@categoria.CantidadArchivos</span>
+                            }
+                        </NavLink>
+
+                    }
+                }
+                else
+                {
+                    <div class="nav-item">
+                        <span class="nav-link sub-item text-muted">(No hay categorias)</span>
+                    </div>
+                }
+
+                </div>
+            }
+        
+    </nav>
+</div>
+
+@code {
+    private bool expandSubNav;
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private List<CategoriaDTO> listaCategorias = new();
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private void ToggleCategorias()
+    {
+        expandSubNav = !expandSubNav;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        CategoriaService.OnCategoriasActualizadas += RecargarMenu;
+
+
+        listaCategorias = await CategoriaService.ObtenerCategoriasAsync();
+    }
+
+    private async void RecargarMenu()
+    {
+        listaCategorias = await CategoriaService.ObtenerCategoriasAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        CategoriaService.OnCategoriasActualizadas -= RecargarMenu;
+    }
+}

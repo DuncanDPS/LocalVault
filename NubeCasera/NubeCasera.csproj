@@ -17,4 +17,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="10.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Models\DTOModels.csproj" />
+  </ItemGroup>
+
 </Project>

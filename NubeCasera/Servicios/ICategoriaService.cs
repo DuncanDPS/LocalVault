@@ -1,5 +1,5 @@
 using System;
-using NubeCasera.Dtos;
+using DTOModels.DTOs;
 
 namespace NubeCasera.Servicios;
 
@@ -36,5 +36,7 @@ public interface ICategoriaService
     public Task<bool> EliminarCategoria(Guid ID_Categoria);
     
 
+    public Task<List<CategoriaDTO>> ObtenerCategoriasAsync();
 
+   
 }

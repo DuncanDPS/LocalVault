@@ -1,6 +1,6 @@
 ﻿using NubeCasera.Clases;
 using NubeCasera.Datos;
-using NubeCasera.Dtos;
+using DTOModels.DTOs;
 
 namespace NubeCasera.Servicios
 {
@@ -45,7 +45,7 @@ namespace NubeCasera.Servicios
         /// </summary>
         /// <param name="id">Id de la referencia del archivo almacenado en la base de datos</param>
         /// <returns></returns>
-        public Task<Stream> DescargarAsync(Guid id);
+        public Task<(Stream archivo, string nombre)> DescargarAsync(Guid id);
 
 
         /// <summary>

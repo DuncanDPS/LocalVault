@@ -20,7 +20,9 @@ namespace NubeCasera.Datos
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Categoria>().HasData(
-                new Categoria { ID = CategoriaPrincipalId, NombreCategoria = "Principal" }
+                new Categoria { ID = CategoriaPrincipalId, NombreCategoria = "Principal",
+                FechaDeCreacion = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
                 );
 
             // filtro para excluir los archivos eliminados

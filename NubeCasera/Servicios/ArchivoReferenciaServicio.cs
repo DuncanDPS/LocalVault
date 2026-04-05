@@ -1,5 +1,5 @@
 ﻿using NubeCasera.Clases;
-using NubeCasera.Dtos;
+using DTOModels.DTOs;
 using NubeCasera.Datos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -13,6 +13,8 @@ namespace NubeCasera.Servicios
 
         // inyeccion de la DBContext
         private readonly AppDBContext _appDBContext;
+        // recibimos el id de la categoria principal
+        Guid idCatPrincipal = AppDBContext.CategoriaPrincipalId;
         public ArchivoReferenciaServicio(AppDBContext appDBContext)
         {
             _appDBContext = appDBContext;
@@ -88,7 +90,6 @@ namespace NubeCasera.Servicios
             return archivos;
         }
 
-        // TODO: Implementar almacenamiento físico de archivos con consistencia transaccional respecto a la metadata
         public async Task<ArchivoReferenciaDTO> GuardarArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO, IFormFile archivoFisico)
         {
             try
@@ -205,7 +206,7 @@ namespace NubeCasera.Servicios
         }
 
         
-        public async Task<Stream> DescargarAsync(Guid id)
+        public async Task<(Stream archivo, string nombre)> DescargarAsync(Guid id)
         {
             // 1. validar el id que no sea nulo  y que exista un un archivo con ese id
             if(id == Guid.Empty) throw new ArgumentNullException("El id esta vacio");
@@ -223,9 +224,10 @@ namespace NubeCasera.Servicios
             bool hashValido = await VerificarHashAsync(rutaCompleta,archivoReferencia.Hash,archivoReferencia.TipoHash);
 
             if(!hashValido) throw new InvalidOperationException("El archivo esta corrupto o ha sido modificado");
-
+            // abrimos el stream
+            var stream = File.OpenRead(rutaCompleta);
             // devolver un stream
-            return File.OpenRead(rutaCompleta);
+            return (stream, archivoReferencia.Nombre);
         }
 
         public async Task ELiminarAsync(Guid id)

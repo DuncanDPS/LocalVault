@@ -394,3 +394,6 @@ secrets.json
 # Build folders
 bin/
 obj/
+
+# Libman front-end downloaded libs
+Front/wwwroot/lib/bootstrap-icons/

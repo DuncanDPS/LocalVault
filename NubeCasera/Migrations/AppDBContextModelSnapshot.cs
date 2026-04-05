@@ -64,6 +64,10 @@ namespace NubeCasera.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("EstaEliminado");
+
+                    b.HasIndex("FechaDeEliminacion");
+
                     b.HasIndex("carpetaLogicaID");
 
                     b.ToTable("archivoReferencias");
@@ -76,6 +80,9 @@ namespace NubeCasera.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("CategoriaPadreID")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("FechaDeCreacion")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NombreCategoria")
@@ -92,6 +99,7 @@ namespace NubeCasera.Migrations
                         new
                         {
                             ID = new Guid("00000000-0000-0000-0000-000000000001"),
+                            FechaDeCreacion = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             NombreCategoria = "Principal"
                         });
                 });

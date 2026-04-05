@@ -1,0 +1,117 @@
+﻿@*Aqui se mostraran los archivos especificos de referenciados
+    a una categoria
+*@
+@page "/categoria/{IdCategoria:guid}"
+@using DTOModels.DTOs
+@inject Front.Servicios.IArchivoService ArchivoService
+@inject Front.Servicios.ICategoriaService CategoriaService
+@inject NavigationManager Navigation
+
+<div class="container-fluid">
+    <h1 class="text-center">Carpeta: @IdCategoria</h1>
+
+    <div class="text-end mb-3">
+        @* Pasa el IdCategoria como parámetro para saber dónde se subirá el archivo (opcional según tus rutas) *@
+        <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo($"/subir-archivo/{IdCategoria}"))">Subir Archivo</button>
+       
+        <button class="btn btn-secondary" @onclick="@(() => Navigation.NavigateTo($"/crear-carpeta/{IdCategoria}"))">Crear Carpeta</button> 
+    </div>
+</div>
+
+@if(archivos == null)
+{
+    <p><em>Cargando archivos...</em></p>
+}
+else if(archivos.Count == 0)
+{
+    <div class="alert alert-info">
+        No hay archivos subidos aún. ¡Sube tu primer archivo para empezar a organizar tu nube casera!
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach(var archivo in archivos)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@archivo.Nombre</h5>
+                        <p class="card-text">
+                            <small>Tamaño: @FormatFileSize(archivo.TamanioBytes)</small><br />
+                            <small>Fecha: @archivo.FechaDeSubida.ToShortDateString()</small>
+                        </p>
+                        <button class="btn btn-sm btn-primary" @onclick="@(() => DescargarArchivo(archivo.Id))">
+                            Descargar
+                        </button>
+                        <button class="btn btn-sm btn-danger" @onclick="@(() => EliminarArchivo(archivo.Id))">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+
+    // Inicializar como null para que el "if(archivos == null)" muestre el "Cargando..."
+    private List<ArchivoReferenciaDTO>? archivos;
+
+    // El nombre de la propiedad DEBE coincidir con el nombre definido en el @page
+    [Parameter]
+    public Guid IdCategoria { get; set; }
+
+    // llamada al metodo que llena la lista
+    private async Task ObtenerArchivos()
+    {
+        archivos = await ArchivoService.ObtenerArchivosAsync(IdCategoria);
+    }
+
+    // Se ejecuta al inicializar y CADA VEZ que el IdCategoria cambia
+    protected override async Task OnParametersSetAsync()
+    {
+        archivos = null; // Reinicia el estado de carga si cambias entre categorías
+        await ObtenerArchivos();
+    }
+
+    // --- Métodos faltantes para que compile la UI ---
+
+    private string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        double len = bytes;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len = len / 1024;
+        }
+        return $"{len:0.##} {sizes[order]}";
+    }
+
+    private async Task DescargarArchivo(Guid idArchivo)
+    {
+        var url = ArchivoService.ObtenerUrlDescarga(idArchivo);
+        Navigation.NavigateTo(url, forceLoad: true);
+    }
+
+    private async Task EliminarArchivo(Guid idArchivo)
+    {
+        // 1. Llamar al servicio correcto para eliminar el archivo
+        await ArchivoService.EliminarArchivoAsync(idArchivo);
+
+        // 2. Volver a recargar la lista de archivos para que se actualice la vista (UI)
+        await ObtenerArchivos();
+    }
+
+
+    // Este metodo nos redirecciona a la pagina para subir archivos con el id de la categoria
+    // a la cual queremos subir el archivo
+    private void RedireccionarASubirArchivo(Guid IdCategoria)
+    {
+        Navigation.NavigateTo($"/subir-archivo/{IdCategoria}");
+    }
+
+}

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NubeCasera.Clases;
 using NubeCasera.Servicios;
-using NubeCasera.Dtos;
+using DTOModels.DTOs;
 
 namespace NubeCasera.Controllers
 {
@@ -58,6 +58,21 @@ namespace NubeCasera.Controllers
                 return StatusCode(500, new { Mensaje = "Error al eliminar categoria", e.Message });
             }
 
+        }
+
+        
+        [HttpGet("obtener-categorias")]
+        public async Task<IActionResult> ObtenerCategoriasAsync()
+        {
+            try
+            {
+                var categorias = await _categoriaService.ObtenerCategoriasAsync();
+                return Ok(categorias);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { Mensaje = "Error al obtener categorías", e.Message });
+            }
         }
     }
 }

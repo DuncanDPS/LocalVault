@@ -1,0 +1,99 @@
+.navbar-toggler {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-row {
+    min-height: 3.5rem;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.navbar-brand {
+    font-size: 1.1rem;
+}
+
+.nav-item {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+    .nav-item:first-of-type {
+        padding-top: 1rem;
+    }
+
+    .nav-item:last-of-type {
+        padding-bottom: 1rem;
+    }
+
+    .nav-item ::deep a {
+        color: #d7d7d7;
+        border-radius: 4px;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+    }
+
+.nav-item ::deep a.active {
+    background-color: rgba(255,255,255,0.37);
+    color: white;
+}
+
+.nav-item ::deep a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+/* Estilos para el botón expandible (div que simula nav-link) */
+.nav-item .nav-link[style*="cursor: pointer"] {
+    color: #d7d7d7;
+    border-radius: 4px;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    line-height: 3rem;
+    text-decoration: none;
+}
+
+.nav-item .nav-link[style*="cursor: pointer"]:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+@media (min-width: 641px) {
+    .navbar-toggler {
+        display: none;
+    }
+
+    .collapse {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+
+    .nav-scrollable {
+        /* Allow sidebar to scroll for tall menus */
+        height: calc(100vh - 3.5rem);
+        overflow-y: auto;
+    }
+}
+
+/* Estilos para submenú expandible */
+.sub-item {
+    padding-left: 2.5rem !important;
+    font-size: 0.875rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid #0d6efd;
+    margin-left: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.sub-item:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.float-end {
+    float: right;
+    transition: transform 0.2s ease;
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-left: auto;
+}
