@@ -93,17 +93,17 @@ else
 
     private async Task DescargarArchivo(Guid idArchivo)
     {
-        // TODO: Implementar la llamada para descargar
-        // Ejemplo: Navigation.NavigateTo($"/api/archivos/descargar/{idArchivo}", forceLoad: true);
-        await Task.CompletedTask;
+        var url = ArchivoService.ObtenerUrlDescarga(idArchivo);
+        Navigation.NavigateTo(url, forceLoad: true);
     }
 
     private async Task EliminarArchivo(Guid idArchivo)
     {
-        // TODO: Implementar la llamada al servicio para eliminar
-        // await ArchivoService.EliminarArchivoAsync(idArchivo);
-        // await ObtenerArchivos(); // Recargar la lista después de borrar
-        await Task.CompletedTask;
+        // 1. Llamar al servicio correcto para eliminar el archivo
+        await ArchivoService.EliminarArchivoAsync(idArchivo);
+
+        // 2. Volver a recargar la lista de archivos para que se actualice la vista (UI)
+        await ObtenerArchivos();
     }
 
 
