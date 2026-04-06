@@ -23,7 +23,7 @@ builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorWasm",
-        policy => policy.WithOrigins("http://localhost:5138", "https://localhost:7293")
+        policy => policy.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader());
 });
@@ -34,6 +34,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
+    dbContext.Database.Migrate();
 }
 
 
