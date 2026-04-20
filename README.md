@@ -1,33 +1,72 @@
-# NubeCasera - Enunciado
+LocalVault
+LocalVault es una aplicación web full stack para la gestión de archivos en una nube local. Permite subir, organizar, consultar, descargar y eliminar archivos, además de agruparlos en categorías o carpetas lógicas. El proyecto está dividido en una API en ASP.NET Core y un frontend en Blazor WebAssembly.
 
-Mi proyecto Nube Local Casera:
+Objetivo del proyecto
+El objetivo de este proyecto es construir una solución sencilla pero funcional para almacenamiento y organización de archivos en un entorno local, con una arquitectura separada entre frontend, backend y modelos compartidos.
 
-El proposito es hacer una api que reciba los archivos
-la computadora o servidor guardara en fisico los archivos
-y la base de datos guardara las referencias de los archivos
-o blobs.
+Funcionalidades
+Subida de archivos desde el navegador.
+Cálculo de hash SHA-256 para identificar archivos.
+Almacenamiento de metadatos en base de datos.
+Descarga y eliminación de archivos.
+Creación y gestión de categorías.
+Organización de archivos por carpeta lógica.
+Interfaz web sencilla y orientada a uso práctico.
+Tecnologías utilizadas
+ASP.NET Core Web API
+Blazor WebAssembly
+Entity Framework Core
+SQLite
+C#
+HTML, CSS y Bootstrap
+Arquitectura del proyecto
+El repositorio está organizado en tres partes principales:
 
-Tambien me gustaria tener un frontend y que el usuario 
-pueda crear carpetas logicas o "categorias" para el desarr-
-ollador. El frontend puede ser simple o minimalista.
-Quiero centrarme en el backed y que funcione a la perfeccion.
+FrontApp: frontend desarrollado en Blazor WebAssembly.
+NubeApi: backend con la API REST y la lógica de negocio.
+Models: proyecto compartido con los DTOs utilizados entre frontend y backend.
+Endpoints principales
+Archivos
+POST /api/ArchivoReferencia/subir-archivo
+GET /api/ArchivoReferencia/obtener-archivos/{id?}
+GET /api/ArchivoReferencia/obtener-archivo/{id}
+GET /api/ArchivoReferencia/descargar-archivo/{id}
+DELETE /api/ArchivoReferencia/eliminar-archivo/{id}
+Categorías
+POST /api/Categoria/crear-categoria
+GET /api/Categoria/obtener-categorias
+PATCH /api/Categoria/insertar-archivo-en-categoria/{ID_archivo_referencia}/{ID_Categoria}
+DELETE /api/Categoria/eliminar-categoria/{ID_Categoria}
+Cómo ejecutar el proyecto
+Abrir la solución completa.
+Ejecutar primero la API.
+Ejecutar después el frontend.
+Verificar que la base de datos SQLite se haya creado correctamente.
+Acceder a la aplicación desde el navegador.
+Estructura general
+FrontApp
+Pages: pantallas principales de la interfaz.
+Servicios: consumo de la API.
+wwwroot: archivos estáticos.
+NubeApi
+Controllers: endpoints REST.
+Servicios: lógica de negocio.
+Datos: contexto de base de datos.
+Clases: entidades del dominio.
+Models
+DTOs compartidos entre proyectos.
+Capturas
+Aquí puedes agregar capturas de pantalla del frontend, por ejemplo:
 
-Por ultimo en la laptop secundaria me gustaria poder hacer
-deploy de ese proyecto y poder acceder a el desde local.
-osea desde el celular o otra pc conectada a esa misma red.
-
-Tambien quiero que puedan haber mas usuarios con sus respectivas
-"nubes" o sea el proyecto debe tener autenticacion y validacion
-de usuarios.
-
-No se como hacer eso pero lo importante es hacer que funcione
-primero.
-
-Lo Desarrollare de la siguiente forma:
-
-La API con ASP NET CORE.
-El frontend con Blazor.
-
-Testeare las consultas con Postman.
-
-Este proyecto deberia estar en una o dos semanas maximo.
+Inicio de la aplicación
+Gestión de categorías
+Subida de archivos
+Lista de archivos
+Mejoras futuras
+Sistema de autenticación de usuarios.
+Soporte para múltiples cuentas y espacios privados.
+Búsqueda y filtros avanzados.
+Vista previa de archivos.
+Deploy en red local o servidor propio.
+Nota del proyecto
+Este proyecto fue desarrollado como una solución funcional para gestión de archivos en nube local, priorizando la parte backend, la estructura limpia y la separación entre frontend y API.
