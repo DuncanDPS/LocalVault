@@ -8,9 +8,9 @@
 @inject NavigationManager Navigation
 
 <div class="container-fluid">
-    <h1 class="text-center">Carpeta: @IdCategoria</h1>
+    <h1 class="text-center">Carpeta: @NombreCategoria</h1>
 
-    <div class="text-end mb-3">
+    <div class="page-actions mb-3">
         @* Pasa el IdCategoria como parámetro para saber dónde se subirá el archivo (opcional según tus rutas) *@
         <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo($"/subir-archivo/{IdCategoria}"))">Subir Archivo</button>
        
@@ -33,18 +33,18 @@ else
     <div class="row">
         @foreach(var archivo in archivos)
         {
-            <div class="col-md-4 mb-3">
-                <div class="card">
+            <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex">
+                <div class="card w-100">
                     <div class="card-body">
                         <h5 class="card-title">@archivo.Nombre</h5>
                         <p class="card-text">
                             <small>Tamaño: @FormatFileSize(archivo.TamanioBytes)</small><br />
                             <small>Fecha: @archivo.FechaDeSubida.ToShortDateString()</small>
                         </p>
-                        <button class="btn btn-sm btn-primary" @onclick="@(() => DescargarArchivo(archivo.Id))">
+                        <button class="btn btn-sm btn-primary action-btn" @onclick="@(() => DescargarArchivo(archivo.Id))">
                             Descargar
                         </button>
-                        <button class="btn btn-sm btn-danger" @onclick="@(() => EliminarArchivo(archivo.Id))">
+                        <button class="btn btn-sm btn-danger action-btn" @onclick="@(() => EliminarArchivo(archivo.Id))">
                             Eliminar
                         </button>
                     </div>
@@ -63,10 +63,17 @@ else
     [Parameter]
     public Guid IdCategoria { get; set; }
 
+    public string NombreCategoria = string.Empty;
+
     // llamada al metodo que llena la lista
     private async Task ObtenerArchivos()
     {
         archivos = await ArchivoService.ObtenerArchivosAsync(IdCategoria);
+
+        // Obtener la categoría usando LINQ para mostrar el nombre en lugar del ID
+        var categorias = await CategoriaService.ObtenerCategoriasAsync();
+        var categoriaActual = categorias.FirstOrDefault(c => c.Id == IdCategoria);
+        NombreCategoria = categoriaActual != null ? categoriaActual.NombreCategoria : "Categoría Desconocida";
     }
 
     // Se ejecuta al inicializar y CADA VEZ que el IdCategoria cambia

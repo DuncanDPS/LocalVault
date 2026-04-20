@@ -5,7 +5,7 @@ namespace Front.Servicios
 {
     public class CategoriaService : ICategoriaService
     {
-        public event Action OnCategoriasActualizadas;
+        public event Action? OnCategoriasActualizadas;
         private readonly HttpClient _httpClient;
 
         public CategoriaService(HttpClient httpClient)

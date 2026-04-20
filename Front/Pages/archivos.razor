@@ -8,7 +8,7 @@
 
     <h1 class="text-center">Mis Archivos</h1>
 
-    <div class="text-end mb-3">
+    <div class="page-actions mb-3">
         <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo("/subir-archivo"))">Subir Archivo</button>
    
         <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo("/subir-archivo"))">Crear Carpeta</button> 
@@ -19,29 +19,29 @@
 {
     <p><em>Cargando archivos...</em></p>
 }
-else if(archivos != null && archivos.Count == 0)
+else if(archivos.Count == 0)
 {
     <div class="alert alert-info">
-        No hay archivos subidos aún. ¡Sube tu primer archivo para empezar a organizar tu nube casera!
+        No hay archivos subidos aún. ¡Sube tu primer archivo para empezar a organizar tu LocalVault!
     </div>
 }
-else
+else if(archivos is not null)
 {
         <div class="row">
         @foreach(var archivo in archivos)
         {
-            <div class="col-md-4 mb-3">
-                <div class="card">
+            <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex">
+                <div class="card w-100">
                     <div class="card-body">
                         <h5 class="card-title">@archivo.Nombre</h5>
                         <p class="card-text">
                             <small>Tamaño: @FormatFileSize(archivo.TamanioBytes)</small><br />
                             <small>Fecha: @archivo.FechaDeSubida.ToShortDateString()</small>
                         </p>
-                        <button class="btn btn-sm btn-primary" @onclick="@(() => DescargarArchivo(archivo.Id))">
+                        <button class="btn btn-sm btn-primary action-btn" @onclick="@(() => DescargarArchivo(archivo.Id))">
                             Descargar
                         </button>
-                        <button class="btn btn-sm btn-danger" @onclick="@(() => EliminarArchivo(archivo.Id))">
+                        <button class="btn btn-sm btn-danger action-btn" @onclick="@(() => EliminarArchivo(archivo.Id))">
                             Eliminar
                         </button>
                     </div>

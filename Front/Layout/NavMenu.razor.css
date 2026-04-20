@@ -27,10 +27,13 @@
     .nav-item ::deep a {
         color: #d7d7d7;
         border-radius: 4px;
-        height: 3rem;
+        min-height: 3rem;
         display: flex;
         align-items: center;
-        line-height: 3rem;
+        line-height: 1.25rem;
+        padding-top: 0.35rem;
+        padding-bottom: 0.35rem;
+        word-break: break-word;
     }
 
 .nav-item ::deep a.active {
@@ -43,18 +46,20 @@
     color: white;
 }
 
-/* Estilos para el botón expandible (div que simula nav-link) */
-.nav-item .nav-link[style*="cursor: pointer"] {
+/* Boton de categorias en el menu */
+.nav-item .nav-categorias-header {
     color: #d7d7d7;
     border-radius: 4px;
-    height: 3rem;
+    min-height: 3rem;
     display: flex;
     align-items: center;
-    line-height: 3rem;
+    line-height: 1.25rem;
     text-decoration: none;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
 }
 
-.nav-item .nav-link[style*="cursor: pointer"]:hover {
+.nav-item .nav-categorias-header:hover {
     background-color: rgba(255,255,255,0.1);
     color: white;
 }
@@ -76,13 +81,20 @@
     }
 }
 
+@media (max-width: 640.98px) {
+    .nav-scrollable {
+        max-height: calc(100vh - 3.5rem);
+        overflow-y: auto;
+    }
+}
+
 /* Estilos para submenú expandible */
 .sub-item {
-    padding-left: 2.5rem !important;
+    padding-left: 2rem !important;
     font-size: 0.875rem;
     background-color: rgba(255, 255, 255, 0.05);
     border-left: 3px solid #0d6efd;
-    margin-left: 1rem;
+    margin-left: 0.75rem;
     margin-bottom: 0.25rem;
 }
 

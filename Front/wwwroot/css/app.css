@@ -113,3 +113,24 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+.page-actions {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    width: 100%;
+}
+
+@media (min-width: 576px) {
+    .page-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        width: auto;
+    }
+}

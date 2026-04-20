@@ -24,7 +24,6 @@
 
     </EditForm>
 </div>
-
 @*
     Aqui mostrare las categorias como cartas con informacion de cuantos 
     archivos tiene, un boton para eliminar categoria. 
@@ -39,8 +38,8 @@
 
         if(categoria.Id == CategoriaPrincipalId)
         {
-            <div class="col-md-4 mb-3">
-                <div class="card">
+            <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex">
+                <div class="card w-100">
                     <div class="card-body">
                         <h5 class="card-title">@categoria.NombreCategoria</h5>
                         <!--AQUI VAN MAS DATOS-->
@@ -49,7 +48,7 @@
                             @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
                         </p>
                     </div>
-                    <button class="btn btn-primary mt-2" @onclick="() => RedireccionarACarpeta(categoria.Id)" >
+                    <button class="btn btn-primary mt-2 action-btn" @onclick="() => RedireccionarACarpeta(categoria.Id)" >
                         <span class="bi bi-folder2-open"></span>Abrir Carpeta
                     </button>
                     <div class="card-footer bg-transparent border-top-0">
@@ -62,8 +61,8 @@
         }
         else
         {
-            <div class="col-md-4 mb-3">
-                <div class="card">
+            <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex">
+                <div class="card w-100">
                     <div class="card-body">
                         <h5 class="card-title">@categoria.NombreCategoria</h5>
                         <!--AQUI VAN MAS DATOS-->
@@ -72,11 +71,11 @@
                             @categoria.CantidadArchivos @(categoria.CantidadArchivos == 1 ? "archivo" : "archivos")
                         </p>
 
-                        <button class="btn btn-primary mt-2" @onclick="() => RedireccionarACarpeta(categoria.Id)">
+                        <button class="btn btn-primary mt-2 action-btn" @onclick="() => RedireccionarACarpeta(categoria.Id)">
                             <span class="bi bi-folder2-open"></span>Abrir Carpeta
                         </button>
 
-                        <button class="btn btn-danger mt-2" @onclick="() => EliminarCategoria(categoria.Id)">
+                        <button class="btn btn-danger mt-2 action-btn" @onclick="() => EliminarCategoria(categoria.Id)">
                             <span class="bi bi-trash"></span>Eliminar
                         </button>
                     </div>

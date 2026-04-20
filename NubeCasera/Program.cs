@@ -42,12 +42,9 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
 }
 
-
-
-
 app.UseCors("AllowBlazorWasm");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
