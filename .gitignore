@@ -396,4 +396,4 @@ bin/
 obj/
 
 # Libman front-end downloaded libs
-Front/wwwroot/lib/bootstrap-icons/
+FrontApp/wwwroot/lib/bootstrap-icons/
