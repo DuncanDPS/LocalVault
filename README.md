@@ -88,15 +88,6 @@ El repositorio está organizado en tres partes principales:
 
 ---
 
-## 🖼️ Capturas
-Aquí puedes agregar capturas de pantalla del frontend, por ejemplo:
-- Inicio de la aplicación  
-- Gestión de categorías  
-- Subida de archivos  
-- Lista de archivos  
-
----
-
 ## 🔮 Mejoras futuras
 - Sistema de autenticación de usuarios  
 - Soporte para múltiples cuentas y espacios privados  
