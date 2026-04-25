@@ -5,16 +5,14 @@ using NubeCasera.Servicios;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 // inyeccion de dependencias de EFCORE
 builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefConnection")));
 
-// inyectar el servicio IArchivoReferencia y ICategoriaService
+// inyeccion de dependencias de los servicios
 builder.Services.AddScoped<IArchivoReferenciaServicio, ArchivoReferenciaServicio>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
@@ -30,7 +28,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configuración del pipeline de la aplicación
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

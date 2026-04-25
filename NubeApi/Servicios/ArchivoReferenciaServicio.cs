@@ -35,7 +35,6 @@ namespace NubeCasera.Servicios
               throw new KeyNotFoundException($"El archivo con ID: {id}, no se encontro ");
             }
             // si existe entonces lo convertimos en DTO y lo retornamos
-            // si existe entonces lo convertimos en DTO y lo retornamos
             var archivoDTO = new ArchivoReferenciaDTO
             {
                 Id = archivoExistente.ID,

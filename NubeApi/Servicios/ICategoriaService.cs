@@ -32,10 +32,12 @@ public interface ICategoriaService
     /// Una tarea que representa la operación asincrónica. El resultado de la tarea es <see langword="true"/> si la categoría se
     /// eliminó correctamente; de lo contrario, <see langword="false"/>.
     /// </returns>
-
     public Task<bool> EliminarCategoria(Guid ID_Categoria);
     
-
+/// <summary>
+/// Obtiene una lista de todas las categorías disponibles en el sistema. Cada categoría se representa como un objeto <see cref="CategoriaDTO"/>,
+/// </summary>
+/// <returns></returns>
     public Task<List<CategoriaDTO>> ObtenerCategoriasAsync();
 
    
