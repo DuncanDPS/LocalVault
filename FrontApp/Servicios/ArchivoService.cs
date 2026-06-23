@@ -63,5 +63,13 @@ namespace Front.Servicios
         {
             return  $"{_httpClient.BaseAddress}api/ArchivoReferencia/descargar-archivo/{id}";
         }
+
+        public string ObtenerUrlThumbnail(string? rutaThumbnail)
+        {
+            if (string.IsNullOrWhiteSpace(rutaThumbnail))
+                return string.Empty;
+
+            return new Uri(new Uri(_httpClient.BaseAddress!.ToString()), rutaThumbnail.TrimStart('/')).ToString();
+        }
     }
 }

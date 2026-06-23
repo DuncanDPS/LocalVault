@@ -23,5 +23,10 @@ namespace DTOModels.DTOs
         // Datos de la carpeta lógica que se mostrarán
         public Guid? CarpetaLogicaId { get; set; }
         public string? CarpetaLogicaNombre { get; set; }
+
+        // propiedades para thumbnails
+        public bool TieneThumbnail { get; set; }
+        public string? RutaThumbnail { get; set; }
+
     }
 }

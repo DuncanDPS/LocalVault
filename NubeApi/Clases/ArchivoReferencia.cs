@@ -20,5 +20,9 @@
         public Categoria? carpetaLogica { get; set; } = null;
         public Guid? carpetaLogicaID { get; set; }
 
+        
+        public bool TieneThumbmail { get; set; }
+        public string? RutaThumbnail { get; set; }
+
     }
 }

@@ -9,5 +9,6 @@ namespace Front.Servicios
         Task<ArchivoReferenciaDTO> ObtenerArchivoAsync(Guid id);
         string ObtenerUrlDescarga(Guid id);
         Task EliminarArchivoAsync(Guid id);
+        string ObtenerUrlThumbnail(string? rutaThumbnail);
     }
 }

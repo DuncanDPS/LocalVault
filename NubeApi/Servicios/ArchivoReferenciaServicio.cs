@@ -15,9 +15,13 @@ namespace NubeCasera.Servicios
         private readonly AppDBContext _appDBContext;
         // recibimos el id de la categoria principal
         Guid idCatPrincipal = AppDBContext.CategoriaPrincipalId;
-        public ArchivoReferenciaServicio(AppDBContext appDBContext)
+
+        // constructor con IThumnailServicio
+        private readonly IThumbnailServicio _thumbnailServicio;
+        public ArchivoReferenciaServicio(AppDBContext appDBContext, IThumbnailServicio thumbnailServicio)
         {
             _appDBContext = appDBContext;
+            _thumbnailServicio = thumbnailServicio;
         }
 
         public async Task<ArchivoReferenciaDTO> ObtenerArchivoAsync(Guid id)
@@ -83,28 +87,35 @@ namespace NubeCasera.Servicios
                 MimeType = a.MimeType,
                 TamanioBytes = a.TamanioBytes,
                 EstaEliminado = a.EstaEliminado,
-                CarpetaLogicaNombre = a.carpetaLogica != null ? a.carpetaLogica.NombreCategoria : string.Empty
+                CarpetaLogicaNombre = a.carpetaLogica != null ? a.carpetaLogica.NombreCategoria : string.Empty,
+                TieneThumbnail = a.Extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase)
+                    || a.Extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase)
+                    || a.Extension.Equals(".png", StringComparison.OrdinalIgnoreCase)
+                    || a.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase)
+                    || a.Extension.Equals(".webp", StringComparison.OrdinalIgnoreCase)
+                    || a.Extension.Equals(".bmp", StringComparison.OrdinalIgnoreCase),
+                RutaThumbnail = $"/thumbnails/{a.Hash}_thumb.webp"
             }).ToListAsync();
 
             return archivos;
         }
 
+        // Modificar el método GuardarArchivoAsync para generar thumbnail después de guardar el archivo
         public async Task<ArchivoReferenciaDTO> GuardarArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO, IFormFile archivoFisico)
         {
             try
             {
-                if(archivoReferenciaDTO == null || archivoFisico == null || archivoFisico.Length == 0)
+                if (archivoReferenciaDTO == null || archivoFisico == null || archivoFisico.Length == 0)
                 {
                     throw new ArgumentNullException(nameof(archivoReferenciaDTO), nameof(archivoFisico));
                 }
-                    // validar el hash, buscando en la BD algun hash similar
-                    var hashExistente = await _appDBContext.archivoReferencias.FirstOrDefaultAsync(a => a.Hash == archivoReferenciaDTO.Hash && !a.EstaEliminado);
-                if(hashExistente != null)
+
+                var hashExistente = await _appDBContext.archivoReferencias.FirstOrDefaultAsync(a => a.Hash == archivoReferenciaDTO.Hash && !a.EstaEliminado);
+                if (hashExistente != null)
                 {
                     throw new InvalidOperationException($"Ya existe un archivo con el hash: {archivoReferenciaDTO.Hash}");
                 }
 
-                // 4. una vez creado el obj y validado se realiza la persistencia en la bd
                 var nuevoArchivo = new ArchivoReferencia
                 {
                     ID = Guid.NewGuid(),
@@ -119,26 +130,33 @@ namespace NubeCasera.Servicios
                     carpetaLogicaID = archivoReferenciaDTO.CarpetaLogicaId
                 };
 
-                // establezco la ruta de almacenamiento
                 nuevoArchivo.RutaDeAlmacenamiento = RutaDeAlmacenamiento(nuevoArchivo.Extension);
-
-
 
                 _appDBContext.archivoReferencias.Add(nuevoArchivo);
                 await _appDBContext.SaveChangesAsync();
 
-                // guardamos el archivo fisico en el disco
-                using(var stream = archivoFisico.OpenReadStream())
+                // Guardar archivo físico y generar thumbnail
+                string rutaThumbnail = string.Empty;
+                bool tieneThumbmail = false;
+
+                using (var stream = archivoFisico.OpenReadStream())
                 {
-                    // se hace una llamada al metodo que guarda el stream
-                    await GuardarEnDisco(stream,nuevoArchivo.RutaDeAlmacenamiento,nuevoArchivo.Nombre);
+                    await GuardarEnDisco(stream, nuevoArchivo.RutaDeAlmacenamiento, nuevoArchivo.Nombre);
+
+                    // Generar thumbnail si es imagen
+                    stream.Position = 0;
+                    var (exito, ruta) = await _thumbnailServicio.GenerarThumbnailAsync(
+                        stream,
+                        nuevoArchivo.Extension,
+                        nuevoArchivo.Hash);
+
+                    tieneThumbmail = exito;
+                    rutaThumbnail = ruta;
                 }
 
-
-                // obtener el nombre de la categoria
                 var nombreCategoria = await _appDBContext.categorias.FindAsync(AppDBContext.CategoriaPrincipalId);
 
-                if(nombreCategoria == null)
+                if (nombreCategoria == null)
                 {
                     throw new InvalidOperationException("La Categoria asignada no existe");
                 }
@@ -156,7 +174,9 @@ namespace NubeCasera.Servicios
                     MimeType = nuevoArchivo.MimeType,
                     TamanioBytes = nuevoArchivo.TamanioBytes,
                     EstaEliminado = nuevoArchivo.EstaEliminado,
-                    CarpetaLogicaNombre = nombreCategoria.NombreCategoria
+                    CarpetaLogicaNombre = nombreCategoria.NombreCategoria,
+                    TieneThumbnail = tieneThumbmail,
+                    RutaThumbnail = rutaThumbnail
                 };
 
                 return resultado;
@@ -164,7 +184,7 @@ namespace NubeCasera.Servicios
             catch
             {
                 throw;
-            }   
+            }
         }
 
         // metodo que guarda el archivo en el disco
@@ -229,31 +249,31 @@ namespace NubeCasera.Servicios
             return (stream, archivoReferencia.Nombre);
         }
 
+        // Modificar ELiminarAsync para también eliminar thumbnail
         public async Task ELiminarAsync(Guid id)
         {
-            // validamos que el id no sea nulo
-            if(id == Guid.Empty) throw new ArgumentNullException("El id esta vacio");
+            if (id == Guid.Empty) throw new ArgumentNullException("El id esta vacio");
             var archivoReferencia = await _appDBContext.archivoReferencias.FindAsync(id);
-            if(archivoReferencia == null) throw new KeyNotFoundException($"No se encontro el archivo con ID: {id} o este no existe.");
+            if (archivoReferencia == null) throw new KeyNotFoundException($"No se encontro el archivo con ID: {id} o este no existe.");
 
-            
-            // eliminamos el archivo fisico del disco
-            var rutaCompleta = Path.Combine(archivoReferencia.RutaDeAlmacenamiento, archivoReferencia.Nombre);    
+            var rutaCompleta = Path.Combine(archivoReferencia.RutaDeAlmacenamiento, archivoReferencia.Nombre);
             if (File.Exists(rutaCompleta))
             {
-                // comparar hash
                 bool esCorrecto = await VerificarHashAsync(rutaCompleta, archivoReferencia.Hash, archivoReferencia.TipoHash);
 
                 if (esCorrecto)
                 {
                     File.Delete(rutaCompleta);
+
+                    // Eliminar thumbnail asociado
+                    if (!string.IsNullOrEmpty(archivoReferencia.RutaThumbnail))
+                    {
+                        await _thumbnailServicio.EliminarThumbnailAsync(archivoReferencia.RutaThumbnail);
+                    }
                 }
             }
-            else
-            {
-             throw new InvalidOperationException("No se pudo eliminar el archivo");   
-            }
 
+            // Marcar como eliminado en BD
             archivoReferencia.EstaEliminado = true;
             archivoReferencia.FechaDeEliminacion = DateTime.UtcNow;
             await _appDBContext.SaveChangesAsync();

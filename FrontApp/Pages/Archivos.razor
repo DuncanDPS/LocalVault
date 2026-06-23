@@ -5,12 +5,10 @@
 <h3>archivos - NubeCasera</h3>
 
 <div class="container-fluid">
-
     <h1 class="text-center">Mis Archivos</h1>
 
     <div class="page-actions mb-3">
         <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo("/subir-archivo"))">Subir Archivo</button>
-   
         <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo("/subir-archivo"))">Crear Carpeta</button> 
     </div>
 </div>
@@ -27,11 +25,22 @@ else if(archivos.Count == 0)
 }
 else if(archivos is not null)
 {
-        <div class="row">
+    <div class="row">
         @foreach(var archivo in archivos)
         {
             <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex">
                 <div class="card w-100">
+                    @if(archivo.TieneThumbnail && !string.IsNullOrEmpty(archivo.RutaThumbnail))
+                    {
+                        <img src="@ArchivoService.ObtenerUrlThumbnail(archivo.RutaThumbnail)" class="card-img-top" alt="@archivo.Nombre" style="height: 200px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-muted">Sin preview</span>
+                        </div>
+                    }
+                    
                     <div class="card-body">
                         <h5 class="card-title">@archivo.Nombre</h5>
                         <p class="card-text">
@@ -50,8 +59,6 @@ else if(archivos is not null)
         }
     </div>
 }
-
-
 
 @code {
     private List<ArchivoReferenciaDTO>? archivos;
