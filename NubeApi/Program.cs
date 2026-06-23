@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using NubeCasera.Datos;
 using NubeCasera.Servicios;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite(builder
 builder.Services.AddScoped<IArchivoReferenciaServicio, ArchivoReferenciaServicio>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
+builder.Services.AddScoped<IThumbnailServicio, ThumbnailServicio>();
 
 // configuracion de CORS
 builder.Services.AddCors(options =>
@@ -41,11 +43,28 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors("AllowBlazorWasm");
-
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+var thumbnailsPath = Path.Combine(
+    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+    "MisProyectos",
+    "ArchivosReference",
+    "thumbnails");
+
+// Crear la carpeta si no existe
+if (!Directory.Exists(thumbnailsPath))
+{
+    Directory.CreateDirectory(thumbnailsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(thumbnailsPath),
+    RequestPath = "/thumbnails"
+});
 
 app.Run();
