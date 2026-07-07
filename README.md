@@ -92,7 +92,6 @@ El repositorio está organizado en tres partes principales:
 - Sistema de autenticación de usuarios  
 - Soporte para múltiples cuentas y espacios privados  
 - Búsqueda y filtros avanzados  
-- Vista previa de archivos  
 - Deploy en red local o servidor propio  
 
 ---
