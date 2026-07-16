@@ -1,0 +1,15 @@
+﻿
+<div class="search-container">
+    <input  class="search-input" @bind="Query" placeholder="Search..."/>
+    <button class="search-button" @onclick="OnSearch">Search</button>
+</div>
+
+@code {
+    [Parameter] public EventCallback<string> OnSearchClicked { get; set; }
+    string Query { get; set; } = "";
+
+    Task OnSearch()
+    {
+        return OnSearchClicked.InvokeAsync(Query);
+    }
+}

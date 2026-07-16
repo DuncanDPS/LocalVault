@@ -7,6 +7,7 @@ namespace Front.Servicios
         Task<ArchivoReferenciaDTO> SubirArchivoAsync(byte[] contenido, string nombreArchivo, Guid IdCategoria);
         Task<List<ArchivoReferenciaDTO>> ObtenerArchivosAsync(Guid? categoriaId = null);
         Task<ArchivoReferenciaDTO> ObtenerArchivoAsync(Guid id);
+        Task<List<ArchivoReferenciaDTO>> BuscarArchivosAsync(string? q, Guid? categoriaId = null);
         string ObtenerUrlDescarga(Guid id);
         Task EliminarArchivoAsync(Guid id);
         string ObtenerUrlThumbnail(string? rutaThumbnail);

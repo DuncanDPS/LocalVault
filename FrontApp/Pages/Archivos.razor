@@ -1,8 +1,12 @@
 ﻿@page "/archivos"
 @using DTOModels.DTOs
+@using Front.Components
 @inject Front.Servicios.IArchivoService ArchivoService
 @inject NavigationManager Navigation
 <h3>archivos - NubeCasera</h3>
+
+
+
 
 <div class="container-fluid">
     <h1 class="text-center">Mis Archivos</h1>
@@ -11,7 +15,13 @@
         <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo("/subir-archivo"))">Subir Archivo</button>
         <button class="btn btn-primary" @onclick="@(() => Navigation.NavigateTo("/subir-archivo"))">Crear Carpeta</button> 
     </div>
+
+    <SearchBarComponent OnSearchClicked="HandleSearch" />
+
 </div>
+
+
+
 
 @if(archivos == null)
 {
@@ -69,6 +79,7 @@ else if(archivos is not null)
 
 @code {
     private List<ArchivoReferenciaDTO>? archivos;
+    private Guid? categoriaActual = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -142,5 +153,15 @@ else if(archivos is not null)
             ".txt" => "Archivo de texto",
             _ => "Archivo"
         };
+    }
+
+    private async Task HandleSearch(string q)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+        {
+            await CargarArchivos();
+            return;
+        }
+        archivos = await ArchivoService.BuscarArchivosAsync(q, categoriaActual);
     }
 }

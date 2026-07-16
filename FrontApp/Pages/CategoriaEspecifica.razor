@@ -31,10 +31,28 @@ else if(archivos.Count == 0)
 else
 {
     <div class="row">
-        @foreach(var archivo in archivos)
+        @foreach (var archivo in archivos)
         {
             <div class="col-12 col-sm-6 col-lg-4 mb-3 d-flex">
                 <div class="card w-100">
+                    @if (archivo.TieneThumbnail && !string.IsNullOrEmpty(archivo.RutaThumbnail))
+                    {
+                        <img src="@ArchivoService.ObtenerUrlThumbnail(archivo.RutaThumbnail)" class="card-img-top" alt="@archivo.Nombre" style="height: 200px; object-fit: cover;">
+                    }
+                    else if (EsArchivoDeImagen(archivo.Extension))
+                    {
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-muted">Sin preview</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center flex-column gap-2" style="height: 200px;">
+                            <i class="@ObtenerIconoArchivo(archivo.Extension) fs-1 text-secondary"></i>
+                            <span class="text-muted text-center px-2">@ObtenerTextoArchivo(archivo.Extension)</span>
+                        </div>
+                    }
+
                     <div class="card-body">
                         <h5 class="card-title">@archivo.Nombre</h5>
                         <p class="card-text">
@@ -120,5 +138,46 @@ else
     {
         Navigation.NavigateTo($"/subir-archivo/{IdCategoria}");
     }
+
+
+    private static bool EsArchivoDeImagen(string? extension)
+    {
+        if (string.IsNullOrWhiteSpace(extension))
+        {
+            return false;
+        }
+
+        return new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp" }
+            .Contains(extension.ToLowerInvariant());
+    }
+
+    private static string ObtenerIconoArchivo(string? extension)
+    {
+        return extension?.ToLowerInvariant() switch
+        {
+            ".pdf" => "bi bi-file-earmark-pdf text-danger",
+            ".doc" or ".docx" => "bi bi-file-earmark-word text-primary",
+            ".xls" or ".xlsx" => "bi bi-file-earmark-excel text-success",
+            ".ppt" or ".pptx" => "bi bi-file-earmark-ppt text-warning",
+            ".zip" or ".rar" or ".7z" => "bi bi-file-earmark-zip text-secondary",
+            ".txt" => "bi bi-file-earmark-text text-secondary",
+            _ => "bi bi-file-earmark text-secondary"
+        };
+    }
+
+    private static string ObtenerTextoArchivo(string? extension)
+    {
+        return extension?.ToLowerInvariant() switch
+        {
+            ".pdf" => "Documento PDF",
+            ".doc" or ".docx" => "Documento de Word",
+            ".xls" or ".xlsx" => "Hoja de cálculo",
+            ".ppt" or ".pptx" => "Presentación",
+            ".zip" or ".rar" or ".7z" => "Archivo comprimido",
+            ".txt" => "Archivo de texto",
+            _ => "Archivo"
+        };
+    }
+
 
 }

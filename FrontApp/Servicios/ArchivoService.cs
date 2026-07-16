@@ -71,5 +71,21 @@ namespace Front.Servicios
 
             return new Uri(new Uri(_httpClient.BaseAddress!.ToString()), rutaThumbnail.TrimStart('/')).ToString();
         }
+
+        // TODO: Continuar con esta implementacion
+        public async Task<List<ArchivoReferenciaDTO>> BuscarArchivosAsync(string? q, Guid? categoriaId = null)
+        {
+            var query = new List<string>();
+
+            if(!string.IsNullOrWhiteSpace(q))
+                query.Add($"q={Uri.EscapeDataString(q)}");
+            if (categoriaId.HasValue && categoriaId.Value != Guid.Empty)
+                query.Add($"categoriaId={categoriaId}");
+            var url = "api/ArchivoReferencia/buscar";
+            if (query.Count > 0)
+                url += "?" + string.Join("&", query);
+
+            return await _httpClient.GetFromJsonAsync<List<ArchivoReferenciaDTO>>(url) ?? new List<ArchivoReferenciaDTO>(); 
+        }
     }
 }

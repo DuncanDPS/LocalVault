@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
+using System.Linq.Expressions;
 
 namespace NubeCasera.Servicios
 {
@@ -22,6 +23,72 @@ namespace NubeCasera.Servicios
         {
             _appDBContext = appDBContext;
             _thumbnailServicio = thumbnailServicio;
+        }
+
+        // Expression usada por EF Core en .Select(...) - traducible a sql
+        private static readonly Expression<Func<ArchivoReferencia, ArchivoReferenciaDTO>>
+            ToDtoExpression = a => new ArchivoReferenciaDTO
+            {
+                Id = a.ID,
+                Nombre = a.Nombre,
+                FechaDeSubida = a.FechaDeSubida,
+                Hash = a.Hash,
+                TipoHash = a.TipoHash,
+                RutaDeAlmacenamiento = a.RutaDeAlmacenamiento,
+                Extension = a.Extension,
+                MimeType = a.MimeType,
+                TamanioBytes = a.TamanioBytes,
+                EstaEliminado = a.EstaEliminado,
+                FechaDeEliminacion = a.FechaDeEliminacion,
+                CarpetaLogicaId = a.carpetaLogicaID,
+                CarpetaLogicaNombre = a.carpetaLogica != null ? a.carpetaLogica.NombreCategoria : null,
+                TieneThumbnail = a.Extension != null &&
+                    (a.Extension.ToLower() == ".jpg" || a.Extension.ToLower() == ".jpeg" ||
+             a.Extension.ToLower() == ".png" || a.Extension.ToLower() == ".gif" ||
+             a.Extension.ToLower() == ".webp" || a.Extension.ToLower() == ".bmp"),
+                RutaThumbnail = a.Extension != null &&
+            (a.Extension.ToLower() == ".jpg" || a.Extension.ToLower() == ".jpeg" ||
+             a.Extension.ToLower() == ".png" || a.Extension.ToLower() == ".gif" ||
+             a.Extension.ToLower() == ".webp" || a.Extension.ToLower() == ".bmp")
+            ? ("/thumbnails/" + a.Hash + "_thumb.webp")
+            : null
+            };
+
+        // Metodo auxiliar para entidades ya cargadas en memoria
+        private static ArchivoReferenciaDTO ToDto(ArchivoReferencia a)
+        {
+            return new ArchivoReferenciaDTO
+            {
+                Id = a.ID,
+                Nombre = a.Nombre,
+                FechaDeSubida = a.FechaDeSubida,
+                Hash = a.Hash,
+                TipoHash = a.TipoHash,
+                RutaDeAlmacenamiento = a.RutaDeAlmacenamiento,
+                Extension = a.Extension,
+                MimeType = a.MimeType,
+                TamanioBytes = a.TamanioBytes,
+                EstaEliminado = a.EstaEliminado,
+                FechaDeEliminacion = a.FechaDeEliminacion,
+                CarpetaLogicaId = a.carpetaLogicaID,
+                CarpetaLogicaNombre = a.carpetaLogica != null ? a.carpetaLogica.NombreCategoria : null,
+                TieneThumbnail = a.Extension != null &&
+            (a.Extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+             a.Extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+             a.Extension.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+             a.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) ||
+             a.Extension.Equals(".webp", StringComparison.OrdinalIgnoreCase) ||
+             a.Extension.Equals(".bmp", StringComparison.OrdinalIgnoreCase)),
+                RutaThumbnail = (a.Extension != null &&
+            (a.Extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+             a.Extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+             a.Extension.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+             a.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) ||
+             a.Extension.Equals(".webp", StringComparison.OrdinalIgnoreCase) ||
+             a.Extension.Equals(".bmp", StringComparison.OrdinalIgnoreCase)))
+            ? $"/thumbnails/{a.Hash}_thumb.webp"
+            : null
+            };
         }
 
         public async Task<ArchivoReferenciaDTO> ObtenerArchivoAsync(Guid id)
@@ -55,6 +122,7 @@ namespace NubeCasera.Servicios
                 CarpetaLogicaNombre = archivoExistente.carpetaLogica != null ? archivoExistente.carpetaLogica.NombreCategoria : string.Empty
             };
 
+
             return archivoDTO;
 
         }
@@ -74,117 +142,73 @@ namespace NubeCasera.Servicios
 
             // obtener los archivos de la categoria especifica
             var archivos = await _appDBContext.archivoReferencias.Include(a => a.carpetaLogica)
-            .Where(a => a.carpetaLogicaID == categoriaId && !a.EstaEliminado)
-            .Select(a => new ArchivoReferenciaDTO
-            {
-                Id = a.ID,
-                Nombre = a.Nombre,
-                FechaDeSubida = a.FechaDeSubida,
-                Hash = a.Hash,
-                TipoHash = a.TipoHash,
-                RutaDeAlmacenamiento = a.RutaDeAlmacenamiento,
-                Extension = a.Extension,
-                MimeType = a.MimeType,
-                TamanioBytes = a.TamanioBytes,
-                EstaEliminado = a.EstaEliminado,
-                CarpetaLogicaNombre = a.carpetaLogica != null ? a.carpetaLogica.NombreCategoria : string.Empty,
-                TieneThumbnail = a.Extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase)
-                    || a.Extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase)
-                    || a.Extension.Equals(".png", StringComparison.OrdinalIgnoreCase)
-                    || a.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase)
-                    || a.Extension.Equals(".webp", StringComparison.OrdinalIgnoreCase)
-                    || a.Extension.Equals(".bmp", StringComparison.OrdinalIgnoreCase),
-                RutaThumbnail = $"/thumbnails/{a.Hash}_thumb.webp"
-            }).ToListAsync();
+            .Where(a => a.carpetaLogicaID == categoriaId && !a.EstaEliminado).AsNoTracking()
+            .Select(ToDtoExpression).ToListAsync();
 
             return archivos;
         }
 
-        // Modificar el método GuardarArchivoAsync para generar thumbnail después de guardar el archivo
+        
         public async Task<ArchivoReferenciaDTO> GuardarArchivoAsync(ArchivoReferenciaDTO_Add archivoReferenciaDTO, IFormFile archivoFisico)
         {
-            try
+            if (archivoReferenciaDTO == null || archivoFisico == null || archivoFisico.Length == 0)
+                throw new ArgumentNullException(nameof(archivoReferenciaDTO));
+
+            var hashExistente = await _appDBContext.archivoReferencias
+                .FirstOrDefaultAsync(a => a.Hash == archivoReferenciaDTO.Hash && !a.EstaEliminado);
+            if (hashExistente != null)
+                throw new InvalidOperationException($"Ya existe un archivo con el hash: {archivoReferenciaDTO.Hash}");
+
+            var nuevoArchivo = new ArchivoReferencia
             {
-                if (archivoReferenciaDTO == null || archivoFisico == null || archivoFisico.Length == 0)
-                {
-                    throw new ArgumentNullException(nameof(archivoReferenciaDTO), nameof(archivoFisico));
-                }
+                ID = Guid.NewGuid(),
+                Nombre = archivoReferenciaDTO.Nombre,
+                FechaDeSubida = archivoReferenciaDTO.FechaDeSubida ?? DateTime.UtcNow,
+                Hash = archivoReferenciaDTO.Hash,
+                TipoHash = archivoReferenciaDTO.TipoHash,
+                Extension = archivoReferenciaDTO.Extension,
+                MimeType = archivoReferenciaDTO.MimeType,
+                TamanioBytes = archivoReferenciaDTO.TamanioBytes,
+                EstaEliminado = false,
+                carpetaLogicaID = archivoReferenciaDTO.CarpetaLogicaId
+            };
 
-                var hashExistente = await _appDBContext.archivoReferencias.FirstOrDefaultAsync(a => a.Hash == archivoReferenciaDTO.Hash && !a.EstaEliminado);
-                if (hashExistente != null)
-                {
-                    throw new InvalidOperationException($"Ya existe un archivo con el hash: {archivoReferenciaDTO.Hash}");
-                }
+            nuevoArchivo.RutaDeAlmacenamiento = RutaDeAlmacenamiento(nuevoArchivo.Extension);
 
-                var nuevoArchivo = new ArchivoReferencia
-                {
-                    ID = Guid.NewGuid(),
-                    Nombre = archivoReferenciaDTO.Nombre,
-                    FechaDeSubida = (DateTime)archivoReferenciaDTO.FechaDeSubida,
-                    Hash = archivoReferenciaDTO.Hash,
-                    TipoHash = archivoReferenciaDTO.TipoHash,
-                    Extension = archivoReferenciaDTO.Extension,
-                    MimeType = archivoReferenciaDTO.MimeType,
-                    TamanioBytes = archivoReferenciaDTO.TamanioBytes,
-                    EstaEliminado = false,
-                    carpetaLogicaID = archivoReferenciaDTO.CarpetaLogicaId
-                };
+            _appDBContext.archivoReferencias.Add(nuevoArchivo);
+            await _appDBContext.SaveChangesAsync();
 
-                nuevoArchivo.RutaDeAlmacenamiento = RutaDeAlmacenamiento(nuevoArchivo.Extension);
+            // Guardar archivo físico y generar thumbnail
+            string rutaThumbnail = string.Empty;
+            bool tieneThumbmail = false;
 
-                _appDBContext.archivoReferencias.Add(nuevoArchivo);
-                await _appDBContext.SaveChangesAsync();
-
-                // Guardar archivo físico y generar thumbnail
-                string rutaThumbnail = string.Empty;
-                bool tieneThumbmail = false;
-
-                using (var stream = archivoFisico.OpenReadStream())
-                {
-                    await GuardarEnDisco(stream, nuevoArchivo.RutaDeAlmacenamiento, nuevoArchivo.Nombre);
-
-                    // Generar thumbnail si es imagen
-                    stream.Position = 0;
-                    var (exito, ruta) = await _thumbnailServicio.GenerarThumbnailAsync(
-                        stream,
-                        nuevoArchivo.Extension,
-                        nuevoArchivo.Hash);
-
-                    tieneThumbmail = exito;
-                    rutaThumbnail = ruta;
-                }
-
-                var nombreCategoria = await _appDBContext.categorias.FindAsync(AppDBContext.CategoriaPrincipalId);
-
-                if (nombreCategoria == null)
-                {
-                    throw new InvalidOperationException("La Categoria asignada no existe");
-                }
-
-                // MAPEO A DTO PARA RETORNAR
-                var resultado = new ArchivoReferenciaDTO
-                {
-                    Id = nuevoArchivo.ID,
-                    Nombre = nuevoArchivo.Nombre,
-                    FechaDeSubida = nuevoArchivo.FechaDeSubida,
-                    Hash = nuevoArchivo.Hash,
-                    TipoHash = nuevoArchivo.TipoHash,
-                    RutaDeAlmacenamiento = nuevoArchivo.RutaDeAlmacenamiento,
-                    Extension = nuevoArchivo.Extension,
-                    MimeType = nuevoArchivo.MimeType,
-                    TamanioBytes = nuevoArchivo.TamanioBytes,
-                    EstaEliminado = nuevoArchivo.EstaEliminado,
-                    CarpetaLogicaNombre = nombreCategoria.NombreCategoria,
-                    TieneThumbnail = tieneThumbmail,
-                    RutaThumbnail = rutaThumbnail
-                };
-
-                return resultado;
-            }
-            catch
+            using (var stream = archivoFisico.OpenReadStream())
             {
-                throw;
+                await GuardarEnDisco(stream, nuevoArchivo.RutaDeAlmacenamiento, nuevoArchivo.Nombre);
+
+                stream.Position = 0;
+                var (exito, ruta) = await _thumbnailServicio.GenerarThumbnailAsync(
+                    stream,
+                    nuevoArchivo.Extension,
+                    nuevoArchivo.Hash);
+
+                tieneThumbmail = exito;
+                rutaThumbnail = ruta;
             }
+
+            // Cargar la categoría asignada (usar la carpetaLogicaID del nuevo archivo; fallback a principal)
+            var categoriaId = nuevoArchivo.carpetaLogicaID ?? AppDBContext.CategoriaPrincipalId;
+            var nombreCategoria = await _appDBContext.categorias.FindAsync(categoriaId);
+            if (nombreCategoria == null)
+                throw new InvalidOperationException("La Categoria asignada no existe");
+
+            // asignar la navegación en memoria para que ToDto pueda leer el nombre
+            nuevoArchivo.carpetaLogica = nombreCategoria;
+
+
+            // mapear consistentemente usando el helper ToDto
+            var resultado = ToDto(nuevoArchivo);
+            return resultado;
         }
 
         // metodo que guarda el archivo en el disco
@@ -313,5 +337,31 @@ namespace NubeCasera.Servicios
 
             return string.Equals(hashCalculado, hashEsperado, StringComparison.OrdinalIgnoreCase);
         }
+
+        public async Task<List<ArchivoReferenciaDTO>> BuscarArchivoAsync(string? q, Guid? categoriaId)
+        {
+            var query = _appDBContext.archivoReferencias.Include(a => a.carpetaLogica)
+                .Where(a => !a.EstaEliminado).AsQueryable();
+
+            if(categoriaId.HasValue && categoriaId.Value != Guid.Empty)
+            {
+                query = query.Where(a => a.carpetaLogicaID == categoriaId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(q))
+            {
+                q = q.Trim().ToLower();
+
+                query = query.Where(a =>
+                    a.Nombre.ToLower().Contains(q) ||
+                    a.Extension.ToLower().Contains(q) ||
+                    a.Hash.ToLower().Contains(q));
+            }
+            var resultados = await query.AsNoTracking().Select(ToDtoExpression).ToListAsync();
+            return resultados;
+        }
+
+
+
     }
 }

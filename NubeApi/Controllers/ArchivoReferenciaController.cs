@@ -21,10 +21,10 @@ namespace NubeCasera.Controllers
         }
 
         [HttpPost("subir-archivo")]
-        public async Task<IActionResult> GuardarAsync(IFormFile archivo, [FromForm]Guid? IdCategoria) // aqui tengo que recibir un id DE CATEGORIA
+        public async Task<IActionResult> GuardarAsync(IFormFile archivo, [FromForm] Guid? IdCategoria) // aqui tengo que recibir un id DE CATEGORIA
         {
             // validar que no sea null
-            if(archivo == null)
+            if (archivo == null)
             {
                 return BadRequest("No se ha proporcionado ningun archivo o esta vacio");
             }
@@ -34,10 +34,10 @@ namespace NubeCasera.Controllers
                 string hash;
                 using (var stream = archivo.OpenReadStream())
                 {
-                    hash = await _archivoReferenciaServ.CalcularHashArchivoAsync(stream,"SHA256");
+                    hash = await _archivoReferenciaServ.CalcularHashArchivoAsync(stream, "SHA256");
                 }
 
-                if(IdCategoria == null || IdCategoria == Guid.Empty)
+                if (IdCategoria == null || IdCategoria == Guid.Empty)
                 {
                     IdCategoria = AppDBContext.CategoriaPrincipalId;
                 }
@@ -63,10 +63,10 @@ namespace NubeCasera.Controllers
             {
                 return Conflict(new { mensaje = ex.Message });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500, new {mensaje = "Error al subir archivo", detalle = ex.Message});
-            }   
+                return StatusCode(500, new { mensaje = "Error al subir archivo", detalle = ex.Message });
+            }
         }
 
         [HttpGet("obtener-archivos/{id?}")]
@@ -91,9 +91,9 @@ namespace NubeCasera.Controllers
                 var archivo = await _archivoReferenciaServ.ObtenerArchivoAsync(id);
                 return Ok(archivo);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500, new {mensaje = "Error al obtener el archivo ", detalle = ex.Message});
+                return StatusCode(500, new { mensaje = "Error al obtener el archivo ", detalle = ex.Message });
             }
         }
 
@@ -120,7 +120,7 @@ namespace NubeCasera.Controllers
             {
                 return BadRequest(new { mensaje = ex.Message });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, new { mensaje = "Error al descargar el archivo", detalle = ex.Message });
             }
@@ -132,13 +132,27 @@ namespace NubeCasera.Controllers
             try
             {
                 await _archivoReferenciaServ.ELiminarAsync(id);
-                return Ok(new { mensaje = "Archivo eliminado correctamente9a80b6de-ff00-40cc-abb8-bc50de63f2d6"});
+                return Ok(new { mensaje = "Archivo eliminado correctamente9a80b6de-ff00-40cc-abb8-bc50de63f2d6" });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return StatusCode(500, new {mensaje = "Error al eliminar el archivo: ", detalle = ex.Message});
+                return StatusCode(500, new { mensaje = "Error al eliminar el archivo: ", detalle = ex.Message });
             }
         }
 
+        [HttpGet("buscar")]
+        public async Task<IActionResult> BuscarArchivosAsync([FromQuery] string? q, [FromQuery] Guid? categoriaId)
+        {
+            try
+            {
+                var resultados = await _archivoReferenciaServ.BuscarArchivoAsync(q, categoriaId);
+                return Ok(resultados);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al buscar archivos", detalle = ex.Message });
+            }
+
+        }
     }
 }

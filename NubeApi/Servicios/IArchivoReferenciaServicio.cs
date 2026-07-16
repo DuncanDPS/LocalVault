@@ -54,5 +54,13 @@ namespace NubeCasera.Servicios
         /// <param name="id"></param>
         /// <returns></returns>
         public Task ELiminarAsync(Guid id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="q"></param>
+        /// <param name="categoriaId"></param>
+        /// <returns></returns>
+        public Task<List<ArchivoReferenciaDTO>> BuscarArchivoAsync(string? q, Guid? categoriaId);
     }
 }
