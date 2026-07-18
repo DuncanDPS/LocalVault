@@ -16,6 +16,9 @@
        
         <button class="btn btn-secondary" @onclick="@(() => Navigation.NavigateTo($"/crear-carpeta/{IdCategoria}"))">Crear Carpeta</button> 
     </div>
+
+    <SearchBarComponent OnSearchClicked="HandleSearch" />
+
 </div>
 
 @if(archivos == null)
@@ -80,6 +83,9 @@ else
     // El nombre de la propiedad DEBE coincidir con el nombre definido en el @page
     [Parameter]
     public Guid IdCategoria { get; set; }
+
+    
+
 
     public string NombreCategoria = string.Empty;
 
@@ -179,5 +185,19 @@ else
         };
     }
 
+    private async Task HandleSearch(string q)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+        {
+            await CargarArchivos();
+            return;
+        }
+        archivos = await ArchivoService.BuscarArchivosAsync(q, IdCategoria);
+    }
+
+    private async Task CargarArchivos()
+    {
+        archivos = await ArchivoService.ObtenerArchivosAsync();
+    }
 
 }
