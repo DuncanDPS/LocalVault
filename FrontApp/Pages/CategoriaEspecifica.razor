@@ -107,8 +107,7 @@ else
         await ObtenerArchivos();
     }
 
-    // --- Métodos faltantes para que compile la UI ---
-
+  
     private string FormatFileSize(long bytes)
     {
         string[] sizes = { "B", "KB", "MB", "GB", "TB" };
@@ -130,10 +129,7 @@ else
 
     private async Task EliminarArchivo(Guid idArchivo)
     {
-        // 1. Llamar al servicio correcto para eliminar el archivo
-        await ArchivoService.EliminarArchivoAsync(idArchivo);
-
-        // 2. Volver a recargar la lista de archivos para que se actualice la vista (UI)
+        await ArchivoService.EliminarArchivoAsync(idArchivo);  
         await ObtenerArchivos();
     }
 
