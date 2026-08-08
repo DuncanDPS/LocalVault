@@ -1,5 +1,8 @@
 ﻿using DTOModels.DTOs;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace Front.Servicios
@@ -35,29 +38,34 @@ namespace Front.Servicios
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<ArchivoReferenciaDTO> SubirArchivoAsync(byte[] contenido, string nombreArchivo, Guid IdCategoria)
+        #region working on!
+        public async Task<ArchivoReferenciaDTO> SubirArchivoAsync(IBrowserFile file, Guid IdCategoria, long maxAllowedSize)
         {
-            // Crear el contenido multipart/form-data
-            using var content = new MultipartFormDataContent();
+            const int chunkSize = 4 * 1024 * 1024; // 4 MB por chunk
+            var IdSubida = Guid.NewGuid().ToString();
+            var tamanioTotal = file.Size;
+            var chunksTotales = (int)Math.Ceiling((double)tamanioTotal / chunkSize);
 
-            // Crear el  archivo como ByteArrayContent
-            var fileContent = new ByteArrayContent(contenido);
-            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+            await using var stream = file.OpenReadStream(maxAllowedSize: maxAllowedSize);
 
-            // Agregar el archivo con el nombre "archivo" (debe coincidir con lo que espera el backend)
-            content.Add(fileContent, "archivo", nombreArchivo);
+            var buffer = new byte[chunkSize];
+            int chunkIndex = 0;
+            int leer;
 
-            // Agregar el IdCategoria como texto
-            content.Add(new StringContent(IdCategoria.ToString()), "IdCategoria");
+            while((leer = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                var esUltimo = (chunkIndex + 1) == chunksTotales;
+                using var content = new MultipartFormDataContent();
+                // usar solo los bytes leidos
+                var bytes = leer == buffer.Length ? buffer : buffer[..leer];
+                var fileContent = new ByteArrayContent(bytes);
+                // QUEDO AQUI ENTONCES
+            }
 
-            // Hacer POST a la API
-            var response = await _httpClient.PostAsync("api/ArchivoReferencia/subir-archivo", content);
-            response.EnsureSuccessStatusCode();
 
-            // Deserializar y retornar el resultado
-            return await response.Content.ReadFromJsonAsync<ArchivoReferenciaDTO>()
-                ?? throw new Exception("Error al procesar respuesta del servidor");
+          
         }
+        #endregion
 
         public string ObtenerUrlDescarga(Guid id)
         {

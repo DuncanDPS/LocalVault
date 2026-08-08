@@ -3,12 +3,25 @@ using Microsoft.OpenApi;
 using NubeCasera.Datos;
 using NubeCasera.Servicios;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Limite de subida establecido en 5gb
+const long maxUploadSize = 5L * 1024L * 1024L * 1024L;
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+builder.Services.Configure<FormOptions>(o =>
+{
+    o.MultipartBodyLengthLimit = maxUploadSize;
+});
+
+builder.WebHost.ConfigureKestrel(o =>
+{
+    o.Limits.MaxRequestBodySize = maxUploadSize;
+});
 
 // inyeccion de dependencias de EFCORE
 builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefConnection")));

@@ -7,6 +7,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+
+
 // Configuracion HttpClient segun el host actual del navegador.
 var frontUri = new Uri(builder.HostEnvironment.BaseAddress);
 var apiIsHttps = string.Equals(frontUri.Scheme, "https", StringComparison.OrdinalIgnoreCase);
@@ -16,7 +18,8 @@ var apiBaseAddress = $"{apiScheme}://{frontUri.Host}:{apiPort}/";
 
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri(apiBaseAddress)
+    BaseAddress = new Uri(apiBaseAddress),
+    Timeout = TimeSpan.FromHours(2)
 });
 
 // Registro de servicios.

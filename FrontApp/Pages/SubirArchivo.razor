@@ -1,40 +1,50 @@
 ﻿@page "/subir-archivo"
 @page "/subir-archivo/{CategoriaId:guid}"
 
-@using System.IO
 @inject Front.Servicios.IArchivoService ArchivoService
 @inject Front.Servicios.ICategoriaService CategoriaService
 @inject NavigationManager Navigation
 
 <PageTitle>Subir Archivo - NubeCasera</PageTitle>
 
+
+
 <div class="container-fluid">
     <h1 class="text-center">Subir Archivo</h1>
 </div> 
-<div class="container">
+@* <div class="container">
     <div>Seleccionar Archivo: </div>
     <InputFile OnChange="SubirArchivoMetodo"/>
-</div>
+</div> *@
     
+<div class="mb-3">
+    <label for="formFileMultiple" class="form-label">Seleccionar archivos:</label>
+    <InputFile class="form-control" OnChange="SubirArchivoMetodo" multiple/>
+</div>
 
 
 @code {
     [Parameter]
     public Guid? CategoriaId { get; set; }
 
+    // este codigo, recibe 1 IFormFile por request, se enfoca en el loop
+    // se puede optimizar modificando o creando un endpoint recibiendo
+    // List<IFormFile>.
     public async Task SubirArchivoMetodo(InputFileChangeEventArgs e)
     {
-        var archivo = e.File;
-        if (archivo != null)
-        {
-            using var stream = archivo.OpenReadStream(maxAllowedSize: 512000000); // 500mb
-            using var memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream);
-            var bytes = memoryStream.ToArray();
+        var archivos = e.GetMultipleFiles();
+        const long MaxFileSize = 5L * 1024L * 1024L * 1024L;
 
-            // Usamos GetValueOrDefault() por si la ruta no traía el Guid, mandará Guid.Empty
-            await ArchivoService.SubirArchivoAsync(bytes, archivo.Name, CategoriaId.GetValueOrDefault());
-            Navigation.NavigateTo("/archivos");
+        foreach (var archivo in archivos)
+        {
+            await using var stream = archivo.OpenReadStream(maxAllowedSize: MaxFileSize);
+            await ArchivoService.SubirArchivoAsync(
+                stream,
+                archivo.Name,
+                archivo.ContentType,
+                CategoriaId.GetValueOrDefault());
         }
+        Navigation.NavigateTo("/archivos");
+        
     }
 }
