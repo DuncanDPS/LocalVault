@@ -59,7 +59,28 @@ namespace Front.Servicios
                 // usar solo los bytes leidos
                 var bytes = leer == buffer.Length ? buffer : buffer[..leer];
                 var fileContent = new ByteArrayContent(bytes);
-                // QUEDO AQUI ENTONCES
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(
+                    file.ContentType ?? "application/octet-stream");
+
+                content.Add(fileContent, "chunk", file.Name);
+                content.Add(new StringContent(IdSubida),"IdSubida");
+                content.Add(new StringContent(chunkIndex.ToString
+                    ()),"index");
+                content.Add(new StringContent(esUltimo ? "1" : "0"), "ultimo");
+                content.Add(new StringContent(IdCategoria.ToString()), "CategoriaId");
+                content.Add(new StringContent(file.Name), "filename");
+
+                using var req = new HttpRequestMessage(HttpMethod.Post, "api/ArchivoReferencia/upload-chunk")
+                {
+                    Content = content
+                };
+
+                // importante: pedir que el browser use streaming si esta disponible
+                req.SetBrowserRequestStreamingEnabled(true);
+
+                using var resp = await _httpClient.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
+                resp.EnsureSuccessStatusCode();
+                chunkIndex++;
             }
 
 
