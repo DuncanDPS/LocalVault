@@ -38,11 +38,8 @@
         foreach (var archivo in archivos)
         {
             await using var stream = archivo.OpenReadStream(maxAllowedSize: MaxFileSize);
-            await ArchivoService.SubirArchivoAsync(
-                stream,
-                archivo.Name,
-                archivo.ContentType,
-                CategoriaId.GetValueOrDefault());
+            // IBrowserFile file, Guid IdCategoria, long maxAllowedSize
+            await ArchivoService.SubirArchivoAsync(archivo, CategoriaId ?? Guid.Empty, MaxFileSize);
         }
         Navigation.NavigateTo("/archivos");
         

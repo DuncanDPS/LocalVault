@@ -21,42 +21,71 @@ namespace NubeCasera.Controllers
         }
 
         [HttpPost("subir-archivo")]
-        public async Task<IActionResult> GuardarAsync(IFormFile archivo, [FromForm] Guid? IdCategoria) // aqui tengo que recibir un id DE CATEGORIA
+        public async Task<IActionResult> GuardarAsync(
+            [FromForm] IFormFile chunk,
+            [FromForm] string Idsubida,
+            [FromForm] int index,
+            [FromForm] string ultimo, 
+            [FromForm] Guid? CategoriaId, 
+            [FromForm] string filename) // aqui tengo que recibir un id DE CATEGORIA
         {
-            // validar que no sea null
-            if (archivo == null)
+            if (chunk == null) return BadRequest("Chunk Vacio");
+
+            // Ruta temporal para ir uniendo los chunks
+            var tempPath = Path.Combine(Path.GetTempPath(), $"{Idsubida}_{filename}");
+            
+            using(var stream = new FileStream(tempPath, FileMode.Append))
             {
-                return BadRequest("No se ha proporcionado ningun archivo o esta vacio");
+                await chunk.CopyToAsync(stream);
             }
+            // Si no es el ultimo, regresamos OK para que continue subiendo
+            if(ultimo != "1")
+            {
+                return Ok();
+            }
+
+            // Procesamiento del archivo Finalizado
             try
             {
                 // calcular el hash del archivo
                 string hash;
-                using (var stream = archivo.OpenReadStream())
+                using (var stream = System.IO.File.OpenRead(tempPath))
                 {
                     hash = await _archivoReferenciaServ.CalcularHashArchivoAsync(stream, "SHA256");
                 }
 
-                if (IdCategoria == null || IdCategoria == Guid.Empty)
+                if (CategoriaId == null || CategoriaId == Guid.Empty)
                 {
-                    IdCategoria = AppDBContext.CategoriaPrincipalId;
+                    CategoriaId = AppDBContext.CategoriaPrincipalId;
                 }
+
+                var fileInfo = new FileInfo(tempPath);
 
                 // Crear el DTO
                 var archivoDTO = new ArchivoReferenciaDTO_Add
                 {
-                    Nombre = archivo.FileName,
+                    Nombre = filename,
                     Hash = hash,
                     TipoHash = "SHA256",
-                    Extension = Path.GetExtension(archivo.FileName),
-                    MimeType = archivo.ContentType,
-                    TamanioBytes = archivo.Length,
+                    Extension = Path.GetExtension(filename),
+                    MimeType = chunk.ContentType,
+                    TamanioBytes = fileInfo.Length,
                     FechaDeSubida = DateTime.UtcNow,
-                    CarpetaLogicaId = IdCategoria
+                    CarpetaLogicaId = CategoriaId
+                };
+
+                // Para simular el IFormFile puedes abrir un stream u otro mecanismo de tu servicio
+                // Depende de cómo `_archivoReferenciaServ.GuardarArchivoAsync` consuma el archivo original
+                using var finalStream = System.IO.File.OpenRead(tempPath);
+                var formFile = new FormFile(finalStream, 0, finalStream.Length, "archivo", filename)
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = chunk.ContentType
                 };
 
                 // llamar al servicio
-                var resultado = await _archivoReferenciaServ.GuardarArchivoAsync(archivoDTO, archivo); // TODO: AQUI RECIBIR ID DE CATEGORIA
+                var resultado = await _archivoReferenciaServ.GuardarArchivoAsync(archivoDTO, formFile); // TODO: AQUI RECIBIR ID DE CATEGORIA
+
                 return Ok(resultado);
             }
             catch (InvalidOperationException ex)
@@ -66,6 +95,13 @@ namespace NubeCasera.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { mensaje = "Error al subir archivo", detalle = ex.Message });
+            }
+            finally
+            {
+                if (System.IO.File.Exists(tempPath))
+                {
+                    System.IO.File.Delete(tempPath);
+                }
             }
         }
 

@@ -39,7 +39,7 @@ namespace Front.Servicios
         }
 
         #region working on!
-        public async Task<ArchivoReferenciaDTO> SubirArchivoAsync(IBrowserFile file, Guid IdCategoria, long maxAllowedSize)
+        public async Task SubirArchivoAsync(IBrowserFile file, Guid IdCategoria, long maxAllowedSize)
         {
             const int chunkSize = 4 * 1024 * 1024; // 4 MB por chunk
             var IdSubida = Guid.NewGuid().ToString();
@@ -70,7 +70,7 @@ namespace Front.Servicios
                 content.Add(new StringContent(IdCategoria.ToString()), "CategoriaId");
                 content.Add(new StringContent(file.Name), "filename");
 
-                using var req = new HttpRequestMessage(HttpMethod.Post, "api/ArchivoReferencia/upload-chunk")
+                using var req = new HttpRequestMessage(HttpMethod.Post, "api/ArchivoReferencia/subir-archivo")
                 {
                     Content = content
                 };
@@ -81,11 +81,10 @@ namespace Front.Servicios
                 using var resp = await _httpClient.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
                 resp.EnsureSuccessStatusCode();
                 chunkIndex++;
-            }
-
-
-          
+            }          
         }
+
+
         #endregion
 
         public string ObtenerUrlDescarga(Guid id)
