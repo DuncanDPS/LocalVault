@@ -7,41 +7,74 @@
 
 <PageTitle>Subir Archivo - NubeCasera</PageTitle>
 
-
-
 <div class="container-fluid">
     <h1 class="text-center">Subir Archivo</h1>
-</div> 
-@* <div class="container">
-    <div>Seleccionar Archivo: </div>
-    <InputFile OnChange="SubirArchivoMetodo"/>
-</div> *@
-    
-<div class="mb-3">
-    <label for="formFileMultiple" class="form-label">Seleccionar archivos:</label>
-    <InputFile class="form-control" OnChange="SubirArchivoMetodo" multiple/>
 </div>
 
+<div class="mb-3">
+    <label for="formFileMultiple" class="form-label">Seleccionar archivos:</label>
+    <InputFile class="form-control" OnChange="SubirArchivoMetodo" multiple />
+</div>
+
+@if (subiendoArchivo)
+{
+    <div class="progress mt-3">
+        <div class="progress-bar progress-bar-striped progress-bar-animated"
+             role="progressbar"
+             style="width: @(progresoActual)%"
+             aria-valuenow="@progresoActual"
+             aria-valuemin="0"
+             aria-valuemax="100">
+            @progresoActual%
+        </div>
+    </div>
+}
 
 @code {
     [Parameter]
     public Guid? CategoriaId { get; set; }
 
-    // este codigo, recibe 1 IFormFile por request, se enfoca en el loop
-    // se puede optimizar modificando o creando un endpoint recibiendo
-    // List<IFormFile>.
+    // Variables para la barra de progreso
+    private int progresoActual = 0;
+    private bool subiendoArchivo = false;
+
     public async Task SubirArchivoMetodo(InputFileChangeEventArgs e)
     {
         var archivos = e.GetMultipleFiles();
         const long MaxFileSize = 5L * 1024L * 1024L * 1024L;
 
-        foreach (var archivo in archivos)
+        // Mostrar la barra de progreso
+        subiendoArchivo = true;
+        progresoActual = 0;
+
+        try
         {
-            await using var stream = archivo.OpenReadStream(maxAllowedSize: MaxFileSize);
-            // IBrowserFile file, Guid IdCategoria, long maxAllowedSize
-            await ArchivoService.SubirArchivoAsync(archivo, CategoriaId ?? Guid.Empty, MaxFileSize);
+            foreach (var archivo in archivos)
+            {
+                await ArchivoService.SubirArchivoAsync(
+                    archivo,
+                    CategoriaId ?? Guid.Empty,
+                    MaxFileSize,
+                    (porcentaje) =>
+                    {
+                        progresoActual = porcentaje;
+                        StateHasChanged(); // Actualizar la UI
+                    }
+                );
+            }
         }
+        catch (Exception ex)
+        {
+            // Manejar errores (por ejemplo, mostrar un mensaje)
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        finally
+        {
+            // Ocultar la barra al terminar (éxito o error)
+            subiendoArchivo = false;
+            progresoActual = 0;
+        }
+
         Navigation.NavigateTo("/archivos");
-        
     }
 }
