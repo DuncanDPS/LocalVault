@@ -10,11 +10,16 @@ namespace Front.Servicios
     public class ArchivoService : IArchivoService
     {
         private readonly HttpClient _httpClient;
+
+        //public Action<int>? OnProgresoActualizado;
+
         public ArchivoService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
+ 
+     
         public async Task<List<ArchivoReferenciaDTO>> ObtenerArchivosAsync(Guid? categoriaId = null)
         {
             var url = categoriaId.HasValue
@@ -38,8 +43,8 @@ namespace Front.Servicios
             response.EnsureSuccessStatusCode();
         }
 
-        #region working on!
-        public async Task SubirArchivoAsync(IBrowserFile file, Guid IdCategoria, long maxAllowedSize)
+        
+        public async Task SubirArchivoAsync(IBrowserFile file, Guid IdCategoria, long maxAllowedSize, Action<int> OnProgresoActualizado)
         {
             const int chunkSize = 4 * 1024 * 1024; // 4 MB por chunk
             var IdSubida = Guid.NewGuid().ToString();
@@ -78,6 +83,10 @@ namespace Front.Servicios
                 // importante: pedir que el browser use streaming si esta disponible
                 req.SetBrowserRequestStreamingEnabled(true);
 
+                // porcentaje de carga de chunks, para actualizar la barra de progreso
+                int porcentaje = (int)((chunkIndex + 1) * 100.0 / chunksTotales);
+                OnProgresoActualizado?.Invoke(porcentaje);
+
                 using var resp = await _httpClient.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
                 resp.EnsureSuccessStatusCode();
                 chunkIndex++;
@@ -85,7 +94,7 @@ namespace Front.Servicios
         }
 
 
-        #endregion
+  
 
         public string ObtenerUrlDescarga(Guid id)
         {
