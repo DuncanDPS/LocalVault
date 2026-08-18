@@ -13,21 +13,50 @@
 
 <div class="mb-3">
     <label for="formFileMultiple" class="form-label">Seleccionar archivos:</label>
-    <InputFile class="form-control" OnChange="SubirArchivoMetodo" multiple />
+    <!-- <InputFile class="form-control" OnChange="SubirArchivoMetodo" multiple />  -->
+    <InputFile class="form-control" OnChange="ArchivosSeleccionados" multiple />
+
+    
 </div>
+
+@if (archivosSeleccionados != null && archivosSeleccionados.Count > 0)
+{
+    <div class="alert alert-info">
+        <strong>Archivos Seleccionados:</strong> @archivosSeleccionados.Count
+        <ul>
+            @foreach (var archivo in archivosSeleccionados)
+            {
+                <li>@archivo.Name (@(archivo.Size / 1024) KB)</li>
+            }
+        </ul>
+    </div>
+
+    <button class="btn btn-primary" @onclick="SubirArchivos" disabled="@subiendoArchivo">
+        @if (subiendoArchivo)
+        {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span>Subiendo...</span>
+        }
+        else
+        {
+            <span>Subir Archivos</span>
+        }
+
+    </button>
+}
 
 @if (subiendoArchivo)
 {
     <div class="progress mt-3">
         <div class="progress-bar progress-bar-striped progress-bar-animated"
-             role="progressbar"
-             style="width: @(progresoActual)%"
+         role="progressbar"
+           style="width: @(progresoActual)%"
              aria-valuenow="@progresoActual"
-             aria-valuemin="0"
-             aria-valuemax="100">
-            @progresoActual%
+                aria-valuemin="0"
+                   aria-valuemax="100">
+                      @progresoActual%
         </div>
-    </div>
+    </div>    
 }
 
 @code {
@@ -38,9 +67,18 @@
     private int progresoActual = 0;
     private bool subiendoArchivo = false;
 
-    public async Task SubirArchivoMetodo(InputFileChangeEventArgs e)
+    // variable para guardar los archivos seleccionados
+    private IReadOnlyList<IBrowserFile>? archivosSeleccionados;
+    
+    // obtiene los archivos seleccionados y los guarda en la variable archivosSeleccionados
+    private void ArchivosSeleccionados(InputFileChangeEventArgs e)
     {
-        var archivos = e.GetMultipleFiles();
+        archivosSeleccionados = e.GetMultipleFiles();
+    }
+
+    public async Task SubirArchivos()
+    {
+        if (archivosSeleccionados == null || archivosSeleccionados.Count == 0)return;
         const long MaxFileSize = 5L * 1024L * 1024L * 1024L;
 
         // Mostrar la barra de progreso
@@ -49,7 +87,7 @@
 
         try
         {
-            foreach (var archivo in archivos)
+            foreach (var archivo in archivosSeleccionados)
             {
                 await ArchivoService.SubirArchivoAsync(
                     archivo,
@@ -74,7 +112,5 @@
             subiendoArchivo = false;
             progresoActual = 0;
         }
-
-        Navigation.NavigateTo("/archivos");
     }
 }
