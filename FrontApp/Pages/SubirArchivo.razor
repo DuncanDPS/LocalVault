@@ -23,6 +23,11 @@
 {
     <div class="alert alert-info">
         <strong>Archivos Seleccionados:</strong> @archivosSeleccionados.Count
+        <strong>Tamaño Total:</strong> @(TotalFileSize / (1024 * 1024)) MB
+        @if (TotalFileSize > 5L * 1024L * 1024L * 1024L)
+        {
+            <span class="text-danger"> (Excede el límite de 5 GB)</span>
+        }
         <ul>
             @foreach (var archivo in archivosSeleccionados)
             {
@@ -69,17 +74,29 @@
 
     // variable para guardar los archivos seleccionados
     private IReadOnlyList<IBrowserFile>? archivosSeleccionados;
-    
+
+    // obtiene el tamaño total de los archivos seleccionados para compararlo con el tamaño máximo permitido
+    private long TotalFileSize => archivosSeleccionados?.Sum(f => f.Size) ?? 0;
+
     // obtiene los archivos seleccionados y los guarda en la variable archivosSeleccionados
     private void ArchivosSeleccionados(InputFileChangeEventArgs e)
     {
-        archivosSeleccionados = e.GetMultipleFiles();
+        // límite de archivos que el componente acepta (por defecto GetMultipleFiles() es 10)
+        archivosSeleccionados = e.GetMultipleFiles(maximumFileCount: 100);
     }
 
     public async Task SubirArchivos()
     {
         if (archivosSeleccionados == null || archivosSeleccionados.Count == 0)return;
         const long MaxFileSize = 5L * 1024L * 1024L * 1024L;
+        
+   
+        if (TotalFileSize > MaxFileSize)
+        {
+            // Manejar el caso donde el tamaño total excede el límite
+            Console.WriteLine("El tamaño total de los archivos excede el límite permitido.");
+            return;
+        }
 
         // Mostrar la barra de progreso
         subiendoArchivo = true;

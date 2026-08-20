@@ -229,14 +229,14 @@ namespace NubeCasera.Servicios
                 throw new ArgumentNullException("La extension pasada como parametro esta vacia o nula");
             }
             
-            string miCarpeta = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "MisProyectos","ArchivosReference");
+            string miCarpeta = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "LocalVaultFiles","ArchivosReference");
 
             // si no existe entonces se crea el directorio
             if (!Directory.Exists(miCarpeta)) Directory.CreateDirectory(miCarpeta);
             
             // ahora dependiendo de la extension se crea una ruta, si no existe y se devuelve
             // si existe solamente se devuelve la ruta. 
-            string rutaExtension = Path.Combine(miCarpeta,extension);
+            string rutaExtension = Path.Combine(miCarpeta,extension.ToLowerInvariant());
             if (!Directory.Exists(rutaExtension))
             {
                 Directory.CreateDirectory(rutaExtension);

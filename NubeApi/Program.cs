@@ -64,7 +64,7 @@ app.MapControllers();
 
 var thumbnailsPath = Path.Combine(
     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-    "MisProyectos",
+    "LocalVaultFiles",
     "ArchivosReference",
     "thumbnails");
 

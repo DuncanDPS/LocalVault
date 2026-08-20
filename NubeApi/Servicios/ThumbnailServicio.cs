@@ -23,7 +23,7 @@ namespace NubeCasera.Servicios
         {
             var carpetaBase = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                "MisProyectos",
+                "LocalVaultFiles",
                 "ArchivosReference");
 
             _carpetaThumbnails = Path.Combine(carpetaBase, "thumbnails");

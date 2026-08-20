@@ -64,8 +64,10 @@ namespace Front.Servicios
                 // usar solo los bytes leidos
                 var bytes = leer == buffer.Length ? buffer : buffer[..leer];
                 var fileContent = new ByteArrayContent(bytes);
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue(
-                    file.ContentType ?? "application/octet-stream");
+                var mediaType = string.IsNullOrWhiteSpace(file.ContentType)
+                    ? "application/octet-stream"
+                    : file.ContentType;
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 
                 content.Add(fileContent, "chunk", file.Name);
                 content.Add(new StringContent(IdSubida),"IdSubida");
